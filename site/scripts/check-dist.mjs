@@ -65,7 +65,12 @@ export function checkHtml(html) {
   }
 
   // Attributes, checked on tag markup only (not text or script bodies).
-  const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+  let withoutScripts = html;
+  let previous;
+  do {
+    previous = withoutScripts;
+    withoutScripts = withoutScripts.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+  } while (withoutScripts !== previous);
   for (const [tag] of withoutScripts.matchAll(/<[a-z][a-z0-9-]*\b[^>]*>/gi)) {
     if (/\sstyle\s*=/i.test(tag)) errors.push(`inline style attribute: ${tag.slice(0, 80)}`);
     if (/\son[a-z]+\s*=/i.test(tag)) errors.push(`inline event handler: ${tag.slice(0, 80)}`);
