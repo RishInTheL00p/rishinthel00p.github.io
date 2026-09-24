@@ -1,0 +1,25 @@
+{
+  "pillars": [
+    {
+      "id": "ai-security",
+      "highlights": ["mag-3", "mag-5", "mag-6", "mag-7"],
+      "tools": ["Claude Code", "Kiro", "MCP", "Tracecat", "n8n", "Langflow"],
+      "frameworks": ["OWASP LLM Top 10", "MAESTRO", "STRIDE"]
+    },
+    {
+      "id": "application-security",
+      "highlights": ["mag-2", "kpmg-1", "kpmg-4", "kpmg-5"],
+      "tools": ["Burp Suite", "Semgrep", "Snyk", "OWASP Zap", "GitHub Actions", "Kali Linux"],
+      "frameworks": ["OWASP", "STRIDE", "CVSS"]
+    },
+    {
+      "id": "vulnerability-management",
+      "highlights": ["mag-1", "mag-4", "kpmg-2", "kpmg-3"],
+      "tools": ["Wiz Security", "Tenable", "Invicti", "Python", "Jira", "ServiceNow"],
+      "frameworks": ["NIST CSF", "CIS Top 18", "PCI DSS"]
+    }
+  ],
+  "centre": {
+    "sources": ["mag-2", "ai-agents"]
+  }
+}

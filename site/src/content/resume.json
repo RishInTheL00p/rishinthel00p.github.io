@@ -1,0 +1,112 @@
+{
+  "basics": {
+    "name": "Rishabh Singh",
+    "title": "Security Engineer — AI & Application Security",
+    "location": "Vancouver, BC",
+    "summary": "Rishabh is an experienced **Security Engineer** with more than **7 years of expertise** in vulnerability management, DevSecOps, security automation, cloud security, and AI security. Rishabh has built automations to manage and operate vulnerability management program end-to-end owning scanner integrations, triage automation, remediation workflows, and metrics reporting across complex AWS and container-based environments. He brings **agentic AI** skills experience to security issues, having built custom tooling and **SOAR** workflows that replace manual processes with automated pipelines across the full SDLC lifecycle. Complemented by practical experience in **SAST/DAST/SCA**, threat modeling, and translating security findings into actionable outcomes for engineering and leadership stakeholders.",
+    "profiles": [
+      { "network": "GitHub", "url": "https://github.com/rsg14196" },
+      { "network": "LinkedIn", "url": "https://www.linkedin.com/in/rishabhsingh14196/" }
+    ]
+  },
+  "experience": [
+    {
+      "id": "mag",
+      "company": "Mark Anthony Group",
+      "location": "British Columbia, Canada",
+      "title": "Security Engineer — AI & Application Security",
+      "start": "August 2025",
+      "end": "Present",
+      "bullets": [
+        { "id": "mag-1", "text": "**Owned end-to-end vulnerability management lifecycle** across AWS ECS/EKS and containerized environments — from scanner integration and raw finding enrichment through triage, ownership resolution, SLA tracking, and validated remediation closure; reduced mean-time-to-remediation for critical findings by standardizing workflow automation across the engineering org." },
+        { "id": "mag-2", "text": "Designed and developed **pipeline-integrated SAST/DAST/SCA gates using Wiz Security in Github Actions**, enforcing policy-as-code to block vulnerable container images from reaching production; ensuring findings surfaced at the right stage (CI, container build, production) with context sufficient for a developer to act without security team involvement by building agentic AI workflow that transformed raw vulnerability output into a prioritized **Jira** ticket with remediation PR ready for review." },
+        { "id": "mag-3", "text": "**Developed security workflows** using **Kiro and Claude Code** to eliminate manual triage steps by automating finding classification, ticket routing, exploitability check, and follow-up escalation across the vulnerability lifecycle using MCP." },
+        { "id": "mag-4", "text": "Built **vulnerability posture dashboards and automated reports** tracking open findings by severity, age, owner, and SLA status; gave engineering leadership real-time visibility into exposure without manual data aggregation." },
+        { "id": "mag-5", "text": "Performed automated **penetration testing** against containerized web-apps and AI-driven applications, including novel attack chains against agentic systems; translated confirmed findings into tracked remediation tickets with exploit impact clearly scoped for non-technical stakeholders." },
+        { "id": "mag-6", "text": "Conducted **security design reviews and threat modeling** (OWASP LLM Top 10, STRIDE) across backend services and AI/ML systems, surfacing architectural risks before production release and influencing remediation decisions at the design stage." },
+        { "id": "mag-7", "text": "Authored **operational runbooks and secure development standards** adopted org-wide, covering AI acceptable use, MCP governance, and SDLC security requirements for containerized and cloud-native services." }
+      ]
+    },
+    {
+      "id": "kpmg",
+      "company": "KPMG",
+      "location": "British Columbia, Canada",
+      "title": "Specialist / Sr. Consultant — Digital Risk and Cyber Security Services",
+      "start": "May 2022",
+      "end": "Aug 2025",
+      "bullets": [
+        { "id": "kpmg-1", "text": "Designed and implemented **DevSecOps** pipelines across client AWS environments using **CodePipeline, CloudWatch, SecurityHub, ECS, and EKS**, embedding **SAST/DAST/SCA** scanner gates at CI, container build, and production stages; reduced time-to-remediation for critical vulnerabilities by shifting triage left into developer workflows." },
+        { "id": "kpmg-2", "text": "**Developed Python automation** to drive vulnerability triage across client environments; built integrations that ingested scanner findings from **Nessus, Tenable, and Invicti**, normalized and deduplicated results, and routed tickets to the correct engineering teams without manual intervention." },
+        { "id": "kpmg-3", "text": "Performed **SAST and DAST** against containerized web applications using **Docker, Wiz, and Tenable**; wrote custom scripts to parse and enrich scanner output, integrating confirmed findings directly into **Jira and ServiceNow ticketing** systems." },
+        { "id": "kpmg-4", "text": "Led **penetration testing engagements** against web applications using **Burp Suite, Nessus, and Kali Linux**; created exploit chains that delivered confirmed CVEs with CVSS-scored prioritization and remediation guidance scoped for non-technical stakeholders." },
+        { "id": "kpmg-5", "text": "Conducted **threat modeling (STRIDE)** to influence architecture decisions and secure the design stage of new services across multiple client organizations; assessed vulnerability classes across application and infrastructure layers including XSS, CSRF, injection, and container escape paths." },
+        { "id": "kpmg-6", "text": "Assessed and **developed security metrics and dashboards** aligned to **NIST CSF, ISO 27001/27002, CIS Top 18, and PCI DSS**; tracked vulnerability trends, SLA compliance, and control effectiveness to give clients and leadership clear visibility into security posture." },
+        { "id": "kpmg-7", "text": "Performed **Security Threat Risk Assessments (STRAs)** on mobile and web applications to identify data protection and privacy gaps, producing risk acceptance documentation for BC Government clients under applicable compliance frameworks." }
+      ]
+    },
+    {
+      "id": "nokia",
+      "company": "Nokia",
+      "location": "Ottawa, Canada",
+      "title": "Malware Research Analyst Co-op",
+      "start": "Sept 2021",
+      "end": "Apr 2022",
+      "bullets": [
+        { "id": "nokia-1", "text": "Performed **static and dynamic malware analysis** for Nokia's Cyber Threat Intelligence team; analyzed malware code and behavior using **OllyDBG, WinDBG, IDA Pro, and Wireshark**, and executed threats in sandboxed environments to review behavioral patterns." },
+        { "id": "nokia-2", "text": "Aligned analyzed threats with **MITRE ATT&CK TTPs** and designed detection and mitigation measures using IDS/IPS tools including **Snort**." },
+        { "id": "nokia-3", "text": "**Built automation** to optimize Snort signature deployment using **Bash scripting**, improving detection coverage and reducing manual deployment overhead." }
+      ]
+    },
+    {
+      "id": "ericsson",
+      "company": "Ericsson",
+      "location": "Noida, India",
+      "title": "Network Engineer",
+      "start": "Feb 2018",
+      "end": "Jun 2020",
+      "bullets": [
+        { "id": "ericsson-1", "text": "Performed **root cause analysis** for confirmed network anomalies using **Python scripts**, automating log analysis across complex telecom environments." },
+        { "id": "ericsson-2", "text": "Reviewed and analyzed network parameters and performed **live network troubleshooting** to provide recommendations that improved network deployment security posture and hardware/software configurations." },
+        { "id": "ericsson-3", "text": "Conducted post-commissioning **data analysis and live troubleshoots** on 4G and 5G telecom sites to track threats and security issues." }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "uvic",
+      "degree": "Master of Engineering in Telecommunications and Information Security",
+      "school": "University of Victoria, British Columbia",
+      "location": "BC, Canada",
+      "start": "Sept 2020",
+      "end": "Aug 2022"
+    },
+    {
+      "id": "jss",
+      "degree": "Bachelor of Technology in Electronics and Communications Engineering",
+      "school": "JSS Academy of Technical Education (affiliated with AKTU)",
+      "location": "Noida, India",
+      "start": "August 2013",
+      "end": "June 2017"
+    }
+  ],
+  "skills": [
+    { "group": "ai-security", "items": ["Agentic AI", "MCP", "Kiro", "Claude Code", "OWASP LLM Top 10", "MAESTRO", "MCP governance", "AI acceptable use"] },
+    { "group": "application-security", "items": ["SAST/DAST/SCA", "Penetration testing", "Threat modeling", "Policy-as-code", "Burp Suite", "Semgrep", "Socket", "Snyk", "Nmap", "OWASP Zap", "Kali Linux", "CVSS"] },
+    { "group": "vulnerability-management", "items": ["Tenable (Nessus)", "Wiz Security", "Invicti", "Triage automation", "SLA tracking", "Jira", "ServiceNow"] },
+    { "group": "automation", "items": ["Python", "Bash", "Powershell", "SOAR", "Tracecat", "n8n", "Langflow"] },
+    { "group": "cloud-containers", "items": ["AWS", "Azure", "ECS", "EKS", "CloudWatch", "SecurityHub", "AWS CodePipeline", "GitHub Actions", "Docker", "Kubernetes"] },
+    { "group": "threat-intelligence", "items": ["Static and dynamic malware analysis", "IDA Pro", "OllyDBG", "WinDBG", "Wireshark", "Snort", "IDS/IPS", "MITRE ATT&CK"] },
+    { "group": "governance-risk", "items": ["NIST CSF", "ISO 27001/27002", "CIS Top 18", "PCI DSS", "STRIDE", "OWASP", "Security Threat Risk Assessments"] }
+  ],
+  "certifications": [
+    { "id": "aws-aip", "name": "AWS Certified AI Practitioner", "short": "AI Practitioner", "earned": "March 2026", "verifyUrl": null },
+    { "id": "ccsp", "name": "ISC2 - Certified Cloud Security Professional (CCSP)", "short": "CCSP", "earned": "Aug 2025", "verifyUrl": null },
+    { "id": "secplus", "name": "CompTIA Security+", "short": "Security+", "earned": "July 2024", "verifyUrl": null },
+    { "id": "az900", "name": "Microsoft Certified - Azure Fundamentals (AZ-900)", "short": "AZ-900", "earned": "August 2022", "verifyUrl": null },
+    { "id": "ccna", "name": "Cisco Certified Network Associate (CCNA) - Routing and Switching", "short": "CCNA", "earned": "November 2019", "verifyUrl": null }
+  ],
+  "interests": [
+    { "id": "ai-agents", "text": "Actively research adversarial attacks against AI agents to demonstrate why Human-in-the-loop controls are essential in production AI systems" },
+    { "id": "soccer", "text": "Watch and play soccer religiously" }
+  ]
+}
