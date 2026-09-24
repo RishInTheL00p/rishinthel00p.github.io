@@ -40,5 +40,5 @@
   "interest.soccer": { "text": "I play soccer, attempt golf, and support Liverpool. Only one of those is a personality disorder.", "sources": ["soccer"], "approved": true },
   "interest.ai-agents": { "text": "AI moves at a sprint, security at a jog. I'd like to even that up.", "sources": ["ai-agents"], "approved": true },
   "centre.research": { "text": "I research adversarial attacks against AI agents to show why human-in-the-loop controls belong in production AI systems.", "sources": ["ai-agents"], "approved": true },
-  "contact.privacy": { "text": "Cloudflare Turnstile checks that you're human. Your message goes to my inbox through Resend, and this site doesn't store it. To limit abuse, a one-way hash of your IP address is kept for up to 30 minutes, and briefly in server logs.", "sources": ["site"], "approved": false }
+  "contact.privacy": { "text": "Cloudflare Turnstile checks that you're human. Your message goes to my inbox through Resend, and this site doesn't store it. To limit abuse, a one-way hash of your IP address is kept for up to 30 minutes, and briefly in server logs.", "sources": ["site"], "approved": true }
 }
