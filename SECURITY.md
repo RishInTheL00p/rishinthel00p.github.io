@@ -15,6 +15,7 @@ resolved. There is no bug bounty, but I'm happy to credit you in the fix.
 In scope:
 
 - The site at https://rishinthel00p.github.io and its build output
+- The contact API in `contact-api/` (deployed on Vercel)
 - This repository's code, GitHub Actions workflows and configuration
 
 Out of scope:
@@ -23,7 +24,8 @@ Out of scope:
 - Missing HTTP response headers that GitHub Pages can't set, such as
   `X-Frame-Options` or a header-delivered `frame-ancestors`. This is a known,
   documented limitation (see [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md)).
-- Denial-of-service and volumetric testing
+- Denial-of-service and volumetric testing, including sending bulk messages
+  through the contact form
 
 ## Supported versions
 

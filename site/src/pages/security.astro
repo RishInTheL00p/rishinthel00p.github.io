@@ -1,9 +1,9 @@
 ---
-// Describes only what is implemented. The CSP list is imported from the same
-// module astro.config.mjs uses to build the policy.
+// Describes only what is implemented in this build. The CSP shown is built by
+// the same function astro.config.mjs uses to emit the policy, and the contact
+// sections appear only when the contact form is part of the build.
 import Base from '../layouts/Base.astro';
-import { cspDirectives } from '../lib/csp.mjs';
-import { siteRepoUrl } from '../lib/content.ts';
+import { siteRepoUrl, contact, csp } from '../lib/content.ts';
 
 const gates = [
   ['Content provenance', 'Work history, skills, dates and credentials must match my resume word for word. Any site wording must cite the resume lines it is based on and be approved by me.'],
@@ -13,6 +13,14 @@ const gates = [
   ['Code scanning', 'CodeQL on every pull request, and OpenSSF Scorecard weekly.'],
   ['Pipeline', 'GitHub Actions pinned to commit SHAs, read-only tokens by default, and deployment to GitHub Pages through OIDC. The main branch only accepts pull requests that pass the required checks.'],
 ];
+const contactControls = [
+  ['Origin and CORS', 'The API accepts POST only, only from this exact site, with no cookies or credentials.'],
+  ['Strict input', 'An 8 KB body limit and a strict schema: unknown fields, line breaks in the name and control characters are rejected, so nothing can be injected into the email.'],
+  ['Bot and abuse limits', 'Cloudflare Turnstile, a hidden honeypot field, 3 messages per 10 minutes per visitor and 20 per day overall.'],
+  ['Fails closed', 'If the bot check or rate limiter is unavailable, the message is refused rather than let through. Errors never include internal details.'],
+  ['Fixed recipient', 'The destination address is server configuration, so the form can only ever email me. Messages are sent as plain text.'],
+  ['Secrets', 'API keys live only in Vercel, scoped to production. Only the public Turnstile site key is part of this page.'],
+];
 ---
 <Base title="How this site is secured | Rish in the Loop" description="The controls protecting this site, and the ones GitHub Pages can't provide.">
   <section class="section">
@@ -20,28 +28,53 @@ const gates = [
       <p class="eyebrow">Security</p>
       <h1>How this site is secured</h1>
       <p class="lede">
-        This is a static site: no server, no database, no login and no cookies, so there is very little to attack.
-        Here is what protects what's left, and what I couldn't do on free hosting.
+        This is a static site with no database and no login, and it sets no cookies, so there is very little to attack.
+        {contact && ' The one moving part is the contact form, which runs as a small serverless function.'}
+        Here is what protects all of it, and what I couldn't do on free hosting.
       </p>
 
       <h2>Content Security Policy</h2>
       <p>
-        GitHub Pages can't send HTTP headers, so the policy is delivered in a <code>&lt;meta&gt;</code> tag. Scripts and
-        styles are allowed only from this site, plus a SHA-256 hash for each inline script, computed at build time.
-        There is no <code>'unsafe-inline'</code> anywhere.
+        GitHub Pages can't send HTTP headers, so the policy is delivered in a <code>&lt;meta&gt;</code> tag. Scripts
+        are allowed only from this site{contact && ' and Cloudflare Turnstile'}, plus a SHA-256 hash for each inline
+        script, computed at build time. There is no <code>'unsafe-inline'</code> anywhere.
       </p>
       <ul class="csp card">
-        {cspDirectives.map((d) => <li><code>{d}</code></li>)}
-        <li><code>script-src 'self' 'sha256-…'</code></li>
-        <li><code>style-src 'self'</code></li>
+        {csp.directives.map((d) => <li><code>{d}</code></li>)}
+        <li><code>{`script-src ${csp.scriptResources.join(' ')} 'sha256-...'`}</code></li>
+        <li><code>{`style-src ${csp.styleResources.join(' ')}`}</code></li>
       </ul>
 
-      <h2>No third parties</h2>
-      <p>
-        Fonts are self-hosted, and there are no analytics, trackers, ads or embedded widgets. Your browser talks only to
-        this site. The one thing stored on your device is your light or dark theme choice, kept in your browser's local
-        storage.
-      </p>
+      {contact ? (
+        <>
+          <h2>Third parties</h2>
+          <p>
+            Fonts are self-hosted, and there are no analytics, trackers or ads. Browsing the site talks only to this
+            site. Cloudflare Turnstile loads only once you start using the contact form, and a message you send passes
+            through Vercel (the function), Upstash (rate limiting, storing only a hashed IP) and Resend (email delivery).
+            The one thing this site stores on your device is your light or dark theme choice, in your browser's local
+            storage.
+          </p>
+          <h2>The contact form</h2>
+          <dl class="gates">
+            {contactControls.map(([name, detail]) => (
+              <div class="card">
+                <dt>{name}</dt>
+                <dd>{detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ) : (
+        <>
+          <h2>No third parties</h2>
+          <p>
+            Fonts are self-hosted, and there are no analytics, trackers, ads or embedded widgets. Your browser talks
+            only to this site. The one thing stored on your device is your light or dark theme choice, kept in your
+            browser's local storage.
+          </p>
+        </>
+      )}
 
       <h2>What every change has to pass</h2>
       <dl class="gates">
@@ -56,8 +89,10 @@ const gates = [
       <h2>Known limits</h2>
       <p>
         A <code>&lt;meta&gt;</code> policy can't include <code>frame-ancestors</code>, and GitHub Pages can't send{' '}
-        <code>X-Frame-Options</code>, so another site could frame this one. With no logins or forms here, there is
-        nothing for a clickjacking attack to trigger. HTTPS and its redirect are handled by GitHub Pages.
+        <code>X-Frame-Options</code>, so another site could frame this one. {contact
+          ? 'With no logins, the worst a clickjacking attack could do is trick someone into sending me a message, and the form still needs a completed human check.'
+          : 'With no logins or forms here, there is nothing for a clickjacking attack to trigger.'}
+        HTTPS and its redirect are handled by GitHub Pages.
       </p>
 
       <h2>Found something?</h2>

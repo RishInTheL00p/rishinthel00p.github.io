@@ -1,6 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { cspDirectives } from './src/lib/csp.mjs';
+import { buildCsp, contactConfig } from './src/lib/csp.mjs';
+
+// The contact form (and the CSP entries it needs) is included only when both
+// public build variables are set.
+const csp = buildCsp(contactConfig(process.env));
 
 export default defineConfig({
   site: 'https://rishinthel00p.github.io',
@@ -26,9 +30,9 @@ export default defineConfig({
   security: {
     csp: {
       algorithm: 'SHA-256',
-      directives: cspDirectives,
-      scriptDirective: { resources: ["'self'"] },
-      styleDirective: { resources: ["'self'"] },
+      directives: csp.directives,
+      scriptDirective: { resources: csp.scriptResources },
+      styleDirective: { resources: csp.styleResources },
     },
   },
 });

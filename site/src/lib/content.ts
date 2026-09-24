@@ -4,6 +4,7 @@ import resumeRaw from '../content/resume.json';
 import pillarsRaw from '../content/pillars.json';
 import copyRaw from '../content/copy.json';
 import { ResumeSchema, PillarsSchema, CopySchema } from '../content/schema.ts';
+import { buildCsp, contactConfig } from './csp.mjs';
 
 export const resume = ResumeSchema.parse(resumeRaw);
 export const pillarData = PillarsSchema.parse(pillarsRaw);
@@ -13,6 +14,11 @@ const copyData = CopySchema.parse(copyRaw);
 // (npm run verify) before building, so drafts can never be deployed.
 const buildEnv = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {};
 const allowDrafts = buildEnv.ALLOW_DRAFT_COPY === '1';
+
+/** Contact form settings from public build variables; null means no form. */
+export const contact = contactConfig(buildEnv);
+/** The CSP actually emitted for this build (same builder astro.config.mjs uses). */
+export const csp = buildCsp(contact);
 
 /** Owner-approved site wording. Throws on a missing or unapproved key. */
 export function copy(key: string): string {

@@ -20,8 +20,8 @@ cd "$root"
 
 EMAIL_RE='[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
 # Allowed addresses: GitHub noreply, reserved example domains, SSH remotes,
-# and commit co-author trailers.
-EMAIL_ALLOW_RE='(@users\.noreply\.github\.com|@example\.(com|org|net)|^git@github\.com|^noreply@anthropic\.com)$'
+# commit co-author trailers, and Resend's public shared test sender.
+EMAIL_ALLOW_RE='(@users\.noreply\.github\.com|@example\.(com|org|net)|^git@github\.com|^noreply@anthropic\.com|^onboarding@resend\.dev)$'
 PHONE_RE='(\+?[0-9]{1,3}[ .-]?)?\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}'
 DOB_RE='(date of birth|d\.?o\.?b\.?|born( on)?)[^A-Za-z0-9]{0,5}([0-9]{1,4}[-/. ][0-9]{1,2}|(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[ .,]+[0-9])'
 

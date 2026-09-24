@@ -20,6 +20,7 @@ Two rules shape this repo:
 site/                  Astro static site
   src/content/         resume.json (facts), copy.json (approved wording), pillars.json
   scripts/             verify-content, check-dist, and their tests
+contact-api/           Vercel function behind the contact form (handler, tests, vercel.json)
 resume/                LaTeX resume; personal contact details stay in gitignored private/
 scripts/pii-scan.sh    blocks phone numbers, emails and dates of birth from commits and builds
 .githooks/pre-commit   runs the PII scan (and gitleaks, if installed) before every commit
@@ -36,6 +37,14 @@ cd site
 npm ci
 npm run dev                            # local dev server
 npm run ci                             # everything CI runs: tests, content check, type check, build, output checks
+```
+
+The contact form is included only when the repository variables
+`PUBLIC_CONTACT_API_URL` and `PUBLIC_TURNSTILE_SITE_KEY` are set. The API's
+secrets live in Vercel; see `contact-api/.env.example` for the full list.
+
+```sh
+cd contact-api && npm ci && npm test   # API tests
 ```
 
 To preview wording that hasn't been approved yet, build with
