@@ -28,9 +28,14 @@ const contactControls = [
       <p class="eyebrow">Security</p>
       <h1>How this site is secured</h1>
       <p class="lede">
-        This is a static site with no database and no login, and it sets no cookies, so there is very little to attack.
-        {contact && ' The one moving part is the contact form, which runs as a small serverless function.'}
-        Here is what protects all of it, and what I couldn't do on free hosting.
+        A static site is a small target: nothing to log into, no session cookies, nothing sitting in a database
+        waiting to leak.{' '}
+        {contact
+          ? `The one moving part is the contact form, a serverless function backed by a Redis store on Upstash. That
+            store holds exactly one thing: rate-limit counters. Serverless functions start with no memory and can run
+            as several copies at once, so the counters have to live outside them for the limits to hold. Here's what
+            protects the rest of it.`
+          : "Here's what protects it, and what I couldn't do on free hosting."}
       </p>
 
       <h2>Content Security Policy</h2>

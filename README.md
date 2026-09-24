@@ -47,6 +47,10 @@ secrets live in Vercel; see `contact-api/.env.example` for the full list.
 cd contact-api && npm ci && npm test   # API tests
 ```
 
+The share image (`site/public/og.png`) is rendered from the resume and the
+approved tagline with `npm run og` (needs a local Chrome or Edge). CI fails if
+the name, title or tagline changes without regenerating it.
+
 To preview wording that hasn't been approved yet, build with
 `ALLOW_DRAFT_COPY=1`. CI never sets it, and its content check fails on
 unapproved wording regardless.

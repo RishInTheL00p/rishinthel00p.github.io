@@ -24,6 +24,12 @@ const links = [
     <nav aria-label="Sections">
       <ul>
         {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        <li>
+          <a class="nav-security" href="/security/">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" /></svg>
+            Security
+          </a>
+        </li>
       </ul>
     </nav>
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode" hidden>
@@ -73,6 +79,15 @@ const links = [
   nav ul { display: flex; gap: 22px; }
   nav a { text-decoration: none; color: var(--text-muted); font-size: 0.93rem; font-weight: 500; }
   nav a:hover { color: var(--text); }
+  nav ul { align-items: center; }
+  .nav-security {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 10px; border-radius: 999px;
+    color: var(--appsec) !important; font-weight: 600;
+    border: 1px solid color-mix(in srgb, var(--appsec) 45%, transparent);
+    background: color-mix(in srgb, var(--appsec) 10%, transparent);
+  }
+  .nav-security:hover { background: color-mix(in srgb, var(--appsec) 18%, transparent); }
+  .nav-security svg { width: 14px; height: 14px; fill: currentColor; }
   .theme-toggle {
     display: inline-grid; place-items: center; width: 38px; height: 38px;
     border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elev); cursor: pointer;
@@ -83,7 +98,8 @@ const links = [
   .theme-toggle[aria-pressed='true'] .icon-sun { display: block; }
   .theme-toggle[aria-pressed='true'] .icon-moon { display: none; }
   @media (max-width: 760px) {
-    nav { display: none; }
-    .theme-toggle { margin-left: auto; }
+    /* On phones only the Security link stays in the bar. */
+    nav li:not(:last-child) { display: none; }
+    .brand span { font-size: 0.95rem; }
   }
 </style>

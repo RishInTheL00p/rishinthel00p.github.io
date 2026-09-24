@@ -1,0 +1,106 @@
+---
+// Homepage teaser for /security. Every line is a fact about this build; the
+// contact line appears only when the contact form is part of it.
+import { contact } from '../lib/content.ts';
+
+const checks = [
+  ['csp', "hash-pinned scripts, no 'unsafe-inline'"],
+  ['tracking', 'no cookies, no analytics, no ads'],
+  ...(contact ? [['contact api', 'origin-locked, rate-limited, fails closed']] : []),
+  ['supply chain', 'SHA-pinned actions, lockfiles, CodeQL'],
+  ['privacy', 'PII and secret scans on every commit'],
+  ['content', 'checked against my resume on every build'],
+];
+---
+<section class="sec-callout" aria-labelledby="sec-callout-title">
+  <div class="container">
+    <div class="panel reveal">
+      <div class="scan" aria-hidden="true"></div>
+      <div class="copy">
+        <p class="eyebrow">Security</p>
+        <h2 id="sec-callout-title">This site is its own case study.</h2>
+        <p class="lede">
+          Every change runs through automated security gates before it can ship. Here's what they check, and what free
+          hosting can't do.
+        </p>
+        <a class="btn cta" href="/security/">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" /><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
+          See how it's secured
+        </a>
+      </div>
+      <ul class="report" aria-label="Security checks">
+        {checks.map(([name, detail]) => (
+          <li>
+            <span class="ok" aria-hidden="true">PASS</span>
+            <span class="name">{name}</span>
+            <span class="detail">{detail}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sec-callout { padding: clamp(8px, 2vw, 16px) 0 clamp(56px, 9vw, 104px); }
+  .panel {
+    position: relative; overflow: hidden; border-radius: calc(var(--radius) + 6px);
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(24px, 4vw, 48px); align-items: center;
+    padding: clamp(24px, 4vw, 44px);
+    color: #e6e9ef;
+    background:
+      radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, #b197fc 22%, transparent), transparent 55%),
+      radial-gradient(120% 140% at 100% 100%, color-mix(in srgb, #3bc9db 20%, transparent), transparent 55%),
+      #0b1020;
+    border: 1px solid color-mix(in srgb, #3bc9db 35%, #232c3b);
+    box-shadow: 0 20px 60px rgb(8 12 24 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+  /* A slow scan line sweeping across the panel. */
+  .scan {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, #3bc9db 18%, transparent), transparent);
+    width: 30%; transform: translateX(-120%);
+    animation: sweep 5.5s ease-in-out infinite;
+  }
+  @keyframes sweep { 0% { transform: translateX(-120%); } 60%, 100% { transform: translateX(420%); } }
+  .copy { position: relative; }
+  .eyebrow { color: #9aa5b5; }
+  h2 { color: #fff; font-size: clamp(1.7rem, 3.6vw, 2.4rem); }
+  .lede { color: #b8c1cf; margin-bottom: 22px; }
+  .cta {
+    background: #3bc9db; color: #06121a; border-color: #3bc9db;
+    box-shadow: 0 0 0 0 rgb(59 201 219 / 0.5); animation: glow 2.8s ease-out infinite;
+  }
+  .cta:hover { background: #66d9e8; border-color: #66d9e8; }
+  .cta svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes glow { 0% { box-shadow: 0 0 0 0 rgb(59 201 219 / 0.45); } 70%, 100% { box-shadow: 0 0 0 14px rgb(59 201 219 / 0); } }
+
+  .report {
+    position: relative; font-family: var(--font-mono); font-size: 0.86rem; display: grid; gap: 8px;
+    background: rgb(4 7 14 / 0.65); border: 1px solid #232c3b; border-radius: var(--radius); padding: 18px 20px;
+  }
+  .report li { display: grid; grid-template-columns: auto 8.5em 1fr; gap: 12px; align-items: baseline; }
+  .ok { color: #06121a; background: #69db7c; font-weight: 700; font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; }
+  .name { color: #fff; }
+  .detail { color: #9aa5b5; }
+
+  /* Lines report in one after another once the panel scrolls into view. */
+  .reveal-ready .report li { opacity: 0; transform: translateX(-6px); transition: opacity 0.35s ease, transform 0.35s ease; }
+  .reveal-ready .panel.in .report li { opacity: 1; transform: none; }
+  .reveal-ready .panel.in .report li:nth-child(2) { transition-delay: 0.15s; }
+  .reveal-ready .panel.in .report li:nth-child(3) { transition-delay: 0.3s; }
+  .reveal-ready .panel.in .report li:nth-child(4) { transition-delay: 0.45s; }
+  .reveal-ready .panel.in .report li:nth-child(5) { transition-delay: 0.6s; }
+  .reveal-ready .panel.in .report li:nth-child(6) { transition-delay: 0.75s; }
+
+  @media (max-width: 860px) {
+    .panel { grid-template-columns: 1fr; }
+    .report li { grid-template-columns: auto 1fr; }
+    .detail { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scan, .cta { animation: none; }
+    .reveal-ready .report li { opacity: 1; transform: none; }
+  }
+  @media print { .sec-callout { display: none; } }
+</style>

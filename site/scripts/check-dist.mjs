@@ -65,7 +65,7 @@ export function checkHtml(html) {
   }
 
   // House style: no em dashes anywhere on the site, literal or as entities.
-  if (/—|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push('page contains an em dash');
+  if (/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push('page contains an em dash');
 
   // Attributes, checked on tag markup only (not text or script bodies).
   let withoutScripts = html;

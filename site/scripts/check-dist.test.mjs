@@ -62,6 +62,6 @@ test('an unhashed style closed with "</style >" is still caught', () => {
 });
 
 test('an em dash, literal or as an entity, fails', () => {
-  assert.match(checkHtml(page('<p>fast — secure</p>')).join(), /em dash/);
+  assert.match(checkHtml(page('<p>fast \u2014 secure</p>')).join(), /em dash/);
   assert.match(checkHtml(page('<p>fast &mdash; secure</p>')).join(), /em dash/);
 });

@@ -23,11 +23,12 @@ export function loadInputs() {
     resume: readJson('../src/content/resume.json'),
     pillars: readJson('../src/content/pillars.json'),
     copy: readJson('../src/content/copy.json'),
+    og: readJson('../src/content/og-meta.json'),
   };
 }
 
 /** Returns { errors, warnings } for the given inputs. */
-export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, copy: copyRaw }, { allowUnapproved = false } = {}) {
+export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, copy: copyRaw, og }, { allowUnapproved = false } = {}) {
   const errors = [];
   const warnings = [];
   const fail = (msg) => errors.push(msg);
@@ -164,8 +165,19 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
       if (!cited.includes(num)) fail(`copy "${key}": number "${num}" does not appear in its sources`);
     }
     // House style: the site never uses em dashes.
-    if (/[—]/.test(entry.text)) fail(`copy "${key}": contains an em dash`);
+    if (/\u2014/.test(entry.text)) fail(`copy "${key}": contains an em dash`);
     if (!entry.approved) (allowUnapproved ? warnings : errors).push(`copy "${key}": not yet approved by the owner`);
+  }
+
+  // ---------- Share image (public/og.png) ----------
+  // og-meta.json records the text rendered into the image by `npm run og`.
+  const ogExpected = {
+    name: resume.basics.name,
+    title: resume.basics.title.replace(/\s+[-\u2013\u2014]+\s+/g, ', '),
+    tagline: copy['hero.tagline']?.text,
+  };
+  for (const [k, want] of Object.entries(ogExpected)) {
+    if (og?.[k] !== want) fail(`share image is stale (${k} changed): run "npm run og" and commit public/og.png`);
   }
 
   return { errors, warnings };
