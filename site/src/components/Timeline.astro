@@ -1,0 +1,85 @@
+---
+import Rich from './Rich.astro';
+import { resume, copy, monthIndex } from '../lib/content.ts';
+
+type Entry =
+  | { kind: 'work'; id: string; start: string; end: string; org: string; title: string; location: string;
+      bullets: { id: string; text: string; headline: string }[] }
+  | { kind: 'education'; id: string; start: string; end: string; org: string; title: string; location: string };
+
+// Work and education on one timeline, newest first, so overlaps (the Nokia
+// co-op during the M.Eng.) are visible from the dates themselves.
+const entries: Entry[] = [
+  ...resume.experience.map((r) => ({
+    kind: 'work' as const, id: r.id, start: r.start, end: r.end, org: r.company, title: r.title, location: r.location,
+    bullets: r.bullets.map((b) => ({ ...b, headline: copy(`headline.${b.id}`) })),
+  })),
+  ...resume.education.map((e) => ({
+    kind: 'education' as const, id: e.id, start: e.start, end: e.end, org: e.school, title: e.degree, location: e.location,
+  })),
+].sort((a, b) => monthIndex(b.start) - monthIndex(a.start));
+---
+<section id="experience" class="section">
+  <div class="container">
+    <p class="eyebrow">Experience &amp; education</p>
+    <h2>Career timeline</h2>
+    <ol class="timeline">
+      {entries.map((e) => (
+        <li class={`entry ${e.kind} reveal`}>
+          <div class="when">
+            <span class="dates">{e.start} –</span>
+            <span class="dates">{e.end}</span>
+            <span class="kind">{e.kind === 'work' ? 'Work' : 'Education'}</span>
+          </div>
+          <div class="card body">
+            <h3>{e.kind === 'work' ? e.org : e.title}</h3>
+            <p class="sub">
+              {e.kind === 'work' ? e.title : e.org}
+              <span class="loc"> · {e.location}</span>
+            </p>
+            {e.kind === 'work' && (
+              <div class="bullets">
+                {e.bullets.map((b) => (
+                  <details class="bullet">
+                    <summary>{b.headline}</summary>
+                    <p><Rich text={b.text} /></p>
+                  </details>
+                ))}
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline { position: relative; margin-top: 36px; display: grid; gap: 22px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 150px; top: 8px; bottom: 8px; width: 2px;
+    background: linear-gradient(var(--ai), var(--appsec), var(--vm)); opacity: 0.5;
+  }
+  .entry { display: grid; grid-template-columns: 150px 1fr; gap: 28px; position: relative; }
+  .entry::before {
+    content: ''; position: absolute; left: 144px; top: 22px; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--bg); border: 3px solid var(--text-muted);
+  }
+  .entry.work::before { border-color: var(--human); }
+  .when { padding-top: 16px; text-align: right; padding-right: 12px; font-family: var(--font-mono); font-size: 0.82rem; }
+  .dates { display: block; color: var(--text); }
+  .kind { display: block; color: var(--text-muted); margin-top: 2px; }
+  .body { padding: 18px 22px 10px; }
+  .education .body { background: var(--bg-sunken); box-shadow: none; padding-bottom: 18px; }
+  .body h3 { margin-bottom: 2px; }
+  .sub { color: var(--text-muted); margin-bottom: 8px; }
+  .loc { white-space: nowrap; }
+  .education .sub { margin: 0; }
+
+  @media (max-width: 700px) {
+    .timeline::before { left: 6px; }
+    .entry { grid-template-columns: 1fr; gap: 6px; padding-left: 28px; }
+    .entry::before { left: 0; top: 4px; }
+    .when { text-align: left; padding: 0; display: flex; gap: 10px; }
+  }
+</style>

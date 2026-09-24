@@ -1,0 +1,250 @@
+---
+import Rich from './Rich.astro';
+import { copy, bullet, hasBullet, interest, pillarData } from '../lib/content.ts';
+
+const pillars = pillarData.pillars.map((p) => ({
+  ...p,
+  title: copy(`pillar.${p.id}.title`),
+  summary: copy(`pillar.${p.id}.summary`),
+  highlights: p.highlights.map((id) => ({ ...bullet(id), headline: copy(`headline.${id}`) })),
+}));
+const centreBullets = pillarData.centre.sources
+  .filter(hasBullet)
+  .map((id) => ({ ...bullet(id), headline: copy(`headline.${id}`) }));
+const centreInterests = pillarData.centre.sources.filter((id) => !hasBullet(id)).map(interest);
+
+// Ring geometry: three equal circles at 120° around the centre node.
+const C = { x: 210, y: 208 };
+const R = 112;
+const D = 72; // distance from centre to each ring's centre
+const angle = (deg: number) => (deg * Math.PI) / 180;
+const rings = pillars.map((p, i) => {
+  const a = angle(-90 + i * 120);
+  const cx = C.x + D * Math.cos(a);
+  const cy = C.y + D * Math.sin(a);
+  // Labels sit outside the rings: above the top ring, below the bottom two.
+  // Long titles split onto two lines so neighbouring labels never collide.
+  const words = p.title.split(' ');
+  const lines = p.title.length > 12 && words.length > 1
+    ? [words.slice(0, -1).join(' '), words.at(-1)!]
+    : [p.title];
+  const below = Math.sin(a) > 0;
+  const ly = below ? cy + R + 22 : cy - R - 14 - (lines.length - 1) * 17;
+  return { id: p.id, title: p.title, cx, cy, lx: cx, ly, lines };
+});
+const tabs = [...pillars.map((p) => ({ id: p.id, title: p.title })), { id: 'human', title: copy('centre.title') }];
+---
+<section id="pillars" class="section">
+  <div class="container">
+    <p class="eyebrow">The loop</p>
+    <h2>Three pillars, one loop</h2>
+    <p class="lede">
+      Choose a pillar to see the work behind it. Each headline opens to the original line from the resume.
+    </p>
+
+    <div class="pillars" data-pillars>
+      <div class="diagram" data-active="human" aria-hidden="true">
+        <svg viewBox="0 -12 420 452" focusable="false">
+          {rings.map((r) => (
+            <g class={`ring-g g-${r.id}`} data-select={r.id}>
+              <circle class="ring-fill" cx={r.cx} cy={r.cy} r={R} />
+              <circle class="ring-line" cx={r.cx} cy={r.cy} r={R} />
+              <circle class="ring-flow" cx={r.cx} cy={r.cy} r={R} pathLength="100" />
+              <text class="ring-label" x={r.lx} y={r.ly} text-anchor="middle" dominant-baseline="middle">
+                {r.lines.map((line, i) => <tspan x={r.lx} dy={i === 0 ? 0 : 17}>{line}</tspan>)}
+              </text>
+            </g>
+          ))}
+          <g class="human-g" data-select="human">
+            <circle class="human-pulse" cx={C.x} cy={C.y} r="34" />
+            <circle class="human-dot" cx={C.x} cy={C.y} r="30" />
+            <circle class="human-icon" cx={C.x} cy={C.y - 9} r="7" />
+            <path class="human-icon" d={`M${C.x - 13} ${C.y + 15} a13 11 0 0 1 26 0 z`} />
+          </g>
+        </svg>
+      </div>
+
+      <div class="tabs-wrap">
+        <div class="tablist" data-tablist hidden>
+          {tabs.map((t) => (
+            <button type="button" class={`tab t-${t.id}`} data-tab={t.id} id={`tab-${t.id}`} aria-controls={`panel-${t.id}`}>
+              {t.title}
+            </button>
+          ))}
+        </div>
+
+        {pillars.map((p) => (
+          <div class={`panel card p-${p.id}`} data-panel={p.id} id={`panel-${p.id}`}>
+            <h3>{p.title}</h3>
+            <p class="summary">{p.summary}</p>
+            <div class="highlights">
+              {p.highlights.map((h) => (
+                <details class="bullet">
+                  <summary>{h.headline}</summary>
+                  <p><Rich text={h.text} /></p>
+                </details>
+              ))}
+            </div>
+            <div class="meta-row">
+              <div>
+                <h4>Tools</h4>
+                <ul class="chip-list">{p.tools.map((t) => <li class="chip">{t}</li>)}</ul>
+              </div>
+              <div>
+                <h4>Frameworks</h4>
+                <ul class="chip-list">{p.frameworks.map((f) => <li class="chip">{f}</li>)}</ul>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <div class="panel card p-human" data-panel="human" id="panel-human">
+          <h3>{copy('centre.title')}</h3>
+          <p class="summary">{copy('centre.body')}</p>
+          <div class="highlights">
+            {centreBullets.map((h) => (
+              <details class="bullet">
+                <summary>{h.headline}</summary>
+                <p><Rich text={h.text} /></p>
+              </details>
+            ))}
+          </div>
+          {centreInterests.map((i) => (
+            <blockquote class="interest">{i.text}</blockquote>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-pillars]');
+  if (root) {
+    const tablist = root.querySelector<HTMLElement>('[data-tablist]')!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+    const diagram = root.querySelector<HTMLElement>('.diagram')!;
+
+    tablist.hidden = false;
+    tablist.setAttribute('role', 'tablist');
+    tablist.setAttribute('aria-label', 'Pillars');
+    tabs.forEach((t) => t.setAttribute('role', 'tab'));
+    panels.forEach((p) => {
+      p.setAttribute('role', 'tabpanel');
+      p.setAttribute('aria-labelledby', `tab-${p.dataset.panel}`);
+      p.tabIndex = 0;
+    });
+
+    const select = (id: string, focus = false) => {
+      for (const t of tabs) {
+        const on = t.dataset.tab === id;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      }
+      for (const p of panels) p.hidden = p.dataset.panel !== id;
+      diagram.dataset.active = id;
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.tab!));
+      t.addEventListener('keydown', (e) => {
+        const last = tabs.length - 1;
+        const to =
+          e.key === 'ArrowRight' || e.key === 'ArrowDown' ? (i === last ? 0 : i + 1)
+          : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? (i === 0 ? last : i - 1)
+          : e.key === 'Home' ? 0
+          : e.key === 'End' ? last
+          : -1;
+        if (to >= 0) {
+          e.preventDefault();
+          select(tabs[to].dataset.tab!, true);
+        }
+      });
+    });
+
+    // Pointer shortcut: clicking a ring selects its tab (keyboard users use the tabs).
+    root.querySelectorAll<SVGGElement>('[data-select]').forEach((g) =>
+      g.addEventListener('click', () => select(g.dataset.select!)),
+    );
+
+    select('human');
+  }
+</script>
+
+<style>
+  .pillars { display: grid; grid-template-columns: minmax(280px, 0.9fr) 1.1fr; gap: clamp(24px, 4vw, 56px); align-items: start; margin-top: 36px; }
+  .diagram { position: sticky; top: 88px; }
+  .diagram svg { width: 100%; height: auto; max-width: 460px; display: block; margin: 0 auto; overflow: visible; }
+
+  .g-ai-security { --c: var(--ai); }
+  .g-application-security { --c: var(--appsec); }
+  .g-vulnerability-management { --c: var(--vm); }
+  .ring-g { cursor: pointer; transition: opacity 0.3s ease; }
+  .ring-fill { fill: color-mix(in srgb, var(--c) 9%, transparent); transition: fill 0.3s ease; }
+  .ring-line { fill: none; stroke: var(--c); stroke-width: 2; opacity: 0.55; transition: stroke-width 0.3s ease, opacity 0.3s ease; }
+  .ring-flow {
+    fill: none; stroke: var(--c); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 2 6; animation: flow 14s linear infinite;
+  }
+  .g-application-security .ring-flow { animation-delay: -4.6s; }
+  .g-vulnerability-management .ring-flow { animation-delay: -9.3s; }
+  .ring-label { font-family: var(--font-mono); font-size: 14px; font-weight: 600; fill: var(--c); pointer-events: none; }
+  @keyframes flow { to { stroke-dashoffset: -100; } }
+
+  .diagram[data-active='ai-security'] .ring-g:not(.g-ai-security),
+  .diagram[data-active='application-security'] .ring-g:not(.g-application-security),
+  .diagram[data-active='vulnerability-management'] .ring-g:not(.g-vulnerability-management) { opacity: 0.35; }
+  .diagram[data-active='ai-security'] .g-ai-security .ring-line,
+  .diagram[data-active='application-security'] .g-application-security .ring-line,
+  .diagram[data-active='vulnerability-management'] .g-vulnerability-management .ring-line { stroke-width: 4; opacity: 1; }
+  .diagram[data-active='ai-security'] .g-ai-security .ring-fill,
+  .diagram[data-active='application-security'] .g-application-security .ring-fill,
+  .diagram[data-active='vulnerability-management'] .g-vulnerability-management .ring-fill { fill: color-mix(in srgb, var(--c) 18%, transparent); }
+
+  .human-g { cursor: pointer; }
+  .human-dot { fill: var(--human); }
+  .human-icon { fill: var(--bg); }
+  .human-pulse { fill: none; stroke: var(--human); stroke-width: 2; transform-origin: center; transform-box: fill-box; animation: pulse 2.6s ease-out infinite; }
+  .diagram:not([data-active='human']) .human-pulse { animation-play-state: paused; opacity: 0; }
+  @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.7); opacity: 0; } }
+
+  .tablist { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tablist[hidden] { display: none; }
+  .tab {
+    padding: 9px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elev);
+    cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
+  }
+  .tab[aria-selected='true'] { color: var(--bg); background: var(--c, var(--text)); border-color: var(--c, var(--text)); }
+  .t-ai-security { --c: var(--ai); }
+  .t-application-security { --c: var(--appsec); }
+  .t-vulnerability-management { --c: var(--vm); }
+  .t-human { --c: var(--human); }
+
+  .panel { padding: clamp(20px, 3vw, 32px); border-top: 4px solid var(--c); }
+  .panel + .panel { margin-top: 20px; }
+  .js .panel + .panel { margin-top: 0; }
+  .panel[hidden] { display: none; }
+  .p-ai-security { --c: var(--ai); }
+  .p-application-security { --c: var(--appsec); }
+  .p-vulnerability-management { --c: var(--vm); }
+  .p-human { --c: var(--human); }
+  .panel h3 { color: var(--c); font-size: 1.45rem; }
+  .summary { color: var(--text-muted); }
+  .highlights { margin: 8px 0 20px; }
+  .meta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .meta-row h4 { font-size: 0.78rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+  .interest { margin: 8px 0 0; padding: 14px 18px; border-left: 3px solid var(--c); background: var(--bg-sunken); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-style: italic; }
+
+  @media (max-width: 860px) {
+    .pillars { grid-template-columns: 1fr; }
+    .diagram { position: static; max-width: 380px; margin: 0 auto; width: 100%; }
+    .meta-row { grid-template-columns: 1fr; }
+  }
+  @media print {
+    .diagram { display: none; }
+    .pillars { grid-template-columns: 1fr; }
+    .panel[hidden] { display: block; }
+  }
+</style>

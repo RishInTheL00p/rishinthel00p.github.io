@@ -13,6 +13,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
+
 jobs:
   content:
     name: content provenance
@@ -34,10 +37,19 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm audit --audit-level=high
       - run: npm audit signatures
-      - name: Verifier tests
+      - name: Unit tests (content and build-output checks)
         run: npm test
       - name: Verify site content against the resume
         run: npm run verify
+      - name: Type check
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Check build output (CSP, inline code, links)
+        run: npm run check-dist
+      - name: PII scan of build output
+        working-directory: .
+        run: bash scripts/pii-scan.sh --dir site/dist
 
   privacy:
     name: privacy and secrets

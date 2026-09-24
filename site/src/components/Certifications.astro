@@ -1,0 +1,32 @@
+---
+import { resume } from '../lib/content.ts';
+---
+<section id="certifications" class="section">
+  <div class="container">
+    <p class="eyebrow">Certifications</p>
+    <h2>Credentials</h2>
+    <ul class="certs">
+      {resume.certifications.map((c) => (
+        <li class="cert card reveal">
+          <p class="short">{c.short}</p>
+          <p class="name">{c.name}</p>
+          <p class="earned">Earned {c.earned}</p>
+          {c.verifyUrl && (
+            <a class="verify" href={c.verifyUrl} rel="noopener noreferrer" target="_blank">
+              Verify<span class="visually-hidden"> {c.short} credential</span>
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .certs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 28px; }
+  .cert { padding: 20px; display: flex; flex-direction: column; }
+  .short { font-family: var(--font-mono); font-weight: 700; font-size: 1.3rem; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .name { color: var(--text-muted); font-size: 0.92rem; margin: 0 0 14px; flex: 1; }
+  .earned { font-family: var(--font-mono); font-size: 0.8rem; margin: 0; }
+  .verify { margin-top: 10px; font-size: 0.88rem; font-weight: 600; }
+</style>

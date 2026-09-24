@@ -6,11 +6,24 @@
     "node": ">=24"
   },
   "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check",
     "verify": "node scripts/verify-content.mjs",
     "verify:draft": "node scripts/verify-content.mjs --allow-unapproved",
-    "test": "node --test \"scripts/**/*.test.mjs\""
+    "check-dist": "node scripts/check-dist.mjs",
+    "test": "node --test \"scripts/**/*.test.mjs\"",
+    "ci": "npm test && npm run verify && npm run typecheck && npm run build && npm run check-dist"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "astro": "7.3.4",
     "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "typescript": "6.0.3"
   }
 }

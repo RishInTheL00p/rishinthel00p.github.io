@@ -1,0 +1,8 @@
+---
+// Renders resume text with **bold** runs as <strong>. Text is escaped by Astro;
+// no HTML from content is ever injected.
+import { richParts } from '../lib/content.ts';
+interface Props { text: string }
+const parts = richParts(Astro.props.text);
+---
+{parts.map((p) => (p.bold ? <strong>{p.text}</strong> : p.text))}
