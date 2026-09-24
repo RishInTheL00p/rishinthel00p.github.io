@@ -1,16 +1,7 @@
 ---
-// Homepage teaser for /security. Every line is a fact about this build; the
-// contact line appears only when the contact form is part of it.
-import { contact } from '../lib/content.ts';
-
-const checks = [
-  ['csp', "hash-pinned scripts, no 'unsafe-inline'"],
-  ['tracking', 'no cookies, no analytics, no ads'],
-  ...(contact ? [['contact api', 'origin-locked, rate-limited, fails closed']] : []),
-  ['supply chain', 'SHA-pinned actions, lockfiles, CodeQL'],
-  ['privacy', 'PII and secret scans on every commit'],
-  ['content', 'checked against my resume on every build'],
-];
+// Homepage teaser for /security, in plain language for non-technical readers.
+// The technical detail behind each line is on /security under the same heading.
+import { securitySummary } from '../lib/security-summary.ts';
 ---
 <section class="sec-callout" aria-labelledby="sec-callout-title">
   <div class="container">
@@ -20,8 +11,8 @@ const checks = [
         <p class="eyebrow">Security</p>
         <h2 id="sec-callout-title">This site is its own case study.</h2>
         <p class="lede">
-          Every change runs through automated security gates before it can ship. Here's what they check, and what free
-          hosting can't do.
+          Every update to this site goes through automatic security checks before it goes live. Here's what they
+          protect, in plain terms.
         </p>
         <a class="btn cta" href="/security/">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" /><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
@@ -29,11 +20,11 @@ const checks = [
         </a>
       </div>
       <ul class="report" aria-label="Security checks">
-        {checks.map(([name, detail]) => (
+        {securitySummary.map((item) => (
           <li>
             <span class="ok" aria-hidden="true">PASS</span>
-            <span class="name">{name}</span>
-            <span class="detail">{detail}</span>
+            <span class="name">{item.label}</span>
+            <span class="detail">{item.plain}</span>
           </li>
         ))}
       </ul>
@@ -76,13 +67,13 @@ const checks = [
   @keyframes glow { 0% { box-shadow: 0 0 0 0 rgb(59 201 219 / 0.45); } 70%, 100% { box-shadow: 0 0 0 14px rgb(59 201 219 / 0); } }
 
   .report {
-    position: relative; font-family: var(--font-mono); font-size: 0.86rem; display: grid; gap: 8px;
+    position: relative; font-family: var(--font-mono); font-size: 0.86rem; display: grid; gap: 12px;
     background: rgb(4 7 14 / 0.65); border: 1px solid #232c3b; border-radius: var(--radius); padding: 18px 20px;
   }
-  .report li { display: grid; grid-template-columns: auto 8.5em 1fr; gap: 12px; align-items: baseline; }
+  .report li { display: grid; grid-template-columns: auto 9.5em 1fr; gap: 12px; align-items: baseline; }
   .ok { color: #06121a; background: #69db7c; font-weight: 700; font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; }
   .name { color: #fff; }
-  .detail { color: #9aa5b5; }
+  .detail { color: #b8c1cf; font-family: var(--font-sans); font-size: 0.95rem; line-height: 1.5; }
 
   /* Lines report in one after another once the panel scrolls into view. */
   .reveal-ready .report li { opacity: 0; transform: translateX(-6px); transition: opacity 0.35s ease, transform 0.35s ease; }

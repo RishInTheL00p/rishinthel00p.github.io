@@ -65,3 +65,8 @@ test('an em dash, literal or as an entity, fails', () => {
   assert.match(checkHtml(page('<p>fast \u2014 secure</p>')).join(), /em dash/);
   assert.match(checkHtml(page('<p>fast &mdash; secure</p>')).join(), /em dash/);
 });
+
+test('an in-page link to a missing id fails; one to an existing id passes', () => {
+  assert.match(checkHtml(page('<a href="#nowhere">x</a>')).join(), /broken in-page link: #nowhere/);
+  assert.deepEqual(checkHtml(page('<a href="#here">x</a><section id="here"></section>')), []);
+});

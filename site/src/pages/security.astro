@@ -1,28 +1,26 @@
 ---
-// Describes only what is implemented in this build. The CSP shown is built by
-// the same function astro.config.mjs uses to emit the policy, and the contact
-// sections appear only when the contact form is part of the build.
+// Describes only what is implemented in this build. The plain-language summary
+// is shared with the homepage callout; each item links to its technical
+// section below. The CSP shown is built by the same function astro.config.mjs
+// uses to emit the policy, and contact sections appear only when the contact
+// form is part of the build.
 import Base from '../layouts/Base.astro';
 import { siteRepoUrl, contact, csp } from '../lib/content.ts';
+import { securitySummary } from '../lib/security-summary.ts';
 
-const gates = [
-  ['Content provenance', 'Work history, skills, dates and credentials must match my resume word for word. Any site wording must cite the resume lines it is based on and be approved by me.'],
-  ['Build output checks', 'Every page needs the CSP, and every inline script and style needs its hash in it. Inline event handlers, inline style attributes, javascript: and http: links, unsafe new-tab links and data: URLs in CSS all fail the build.'],
-  ['Privacy scans', 'The repository, its full git history and the built site are scanned for email addresses, phone numbers and dates of birth, and for leaked secrets with gitleaks.'],
-  ['Dependencies', 'Exact versions with a lockfile, installed with install scripts disabled, then checked with npm audit and npm audit signatures. Dependabot proposes updates weekly.'],
-  ['Code scanning', 'CodeQL on every pull request, and OpenSSF Scorecard weekly.'],
-  ['Pipeline', 'GitHub Actions pinned to commit SHAs, read-only tokens by default, and deployment to GitHub Pages through OIDC. The main branch only accepts pull requests that pass the required checks.'],
-];
+const has = (id: string) => securitySummary.some((i) => i.id === id);
+const label = (id: string) => securitySummary.find((i) => i.id === id)?.label ?? id;
+
 const contactControls = [
   ['Origin and CORS', 'The API accepts POST only, only from this exact site, with no cookies or credentials.'],
   ['Strict input', 'An 8 KB body limit and a strict schema: unknown fields, line breaks in the name and control characters are rejected, so nothing can be injected into the email.'],
-  ['Bot and abuse limits', 'Cloudflare Turnstile, a hidden honeypot field, 3 messages per 10 minutes per visitor and 20 per day overall.'],
+  ['Bot and abuse limits', 'Cloudflare Turnstile, a hidden honeypot field, 3 messages per 10 minutes per visitor and 20 per day overall, counted in Upstash Redis against a keyed hash of the IP.'],
   ['Fails closed', 'If the bot check or rate limiter is unavailable, the message is refused rather than let through. Errors never include internal details.'],
   ['Fixed recipient', 'The destination address is server configuration, so the form can only ever email me. Messages are sent as plain text.'],
-  ['Secrets', 'API keys live only in Vercel, scoped to production. Only the public Turnstile site key is part of this page.'],
+  ['Secrets and headers', 'API keys live only in Vercel, scoped to production. API responses carry HSTS, X-Frame-Options: DENY, a deny-all CSP, nosniff and no-store.'],
 ];
 ---
-<Base title="How this site is secured | Rish in the Loop" description="The controls protecting this site, and the ones GitHub Pages can't provide.">
+<Base title="How this site is secured | Rish in the Loop" description="The controls protecting this site, in plain terms and in technical detail.">
   <section class="section">
     <div class="container prose">
       <p class="eyebrow">Security</p>
@@ -38,29 +36,67 @@ const contactControls = [
           : "Here's what protects it, and what I couldn't do on free hosting."}
       </p>
 
-      <h2>Content Security Policy</h2>
-      <p>
-        GitHub Pages can't send HTTP headers, so the policy is delivered in a <code>&lt;meta&gt;</code> tag. Scripts
-        are allowed only from this site{contact && ' and Cloudflare Turnstile'}, plus a SHA-256 hash for each inline
-        script, computed at build time. There is no <code>'unsafe-inline'</code> anywhere.
-      </p>
-      <ul class="csp card">
-        {csp.directives.map((d) => <li><code>{d}</code></li>)}
-        <li><code>{`script-src ${csp.scriptResources.join(' ')} 'sha256-...'`}</code></li>
-        <li><code>{`style-src ${csp.styleResources.join(' ')}`}</code></li>
+      <h2 class="summary-title">In plain terms</h2>
+      <ul class="summary card">
+        {securitySummary.map((item) => (
+          <li>
+            <span class="ok" aria-hidden="true">PASS</span>
+            <div>
+              <p class="label">{item.label}</p>
+              <p class="plain">{item.plain}</p>
+            </div>
+            <a class="more" href={`#${item.id}`}>
+              Technical details<span class="visually-hidden"> for {item.label}</span>
+            </a>
+          </li>
+        ))}
       </ul>
 
-      {contact ? (
-        <>
-          <h2>Third parties</h2>
+      <h2 class="details-title">Technical details</h2>
+
+      <section id="page-integrity" class="detail">
+        <h3>{label('page-integrity')} <span class="kicker">Content Security Policy</span></h3>
+        <p>
+          GitHub Pages can't send HTTP headers, so the policy is delivered in a <code>&lt;meta&gt;</code> tag. Scripts
+          are allowed only from this site{contact && ' and Cloudflare Turnstile'}, plus a SHA-256 hash for each inline
+          script, computed at build time. There is no <code>'unsafe-inline'</code> anywhere.
+        </p>
+        <ul class="csp card">
+          {csp.directives.map((d) => <li><code>{d}</code></li>)}
+          <li><code>{`script-src ${csp.scriptResources.join(' ')} 'sha256-...'`}</code></li>
+          <li><code>{`style-src ${csp.styleResources.join(' ')}`}</code></li>
+        </ul>
+        <p>
+          No visitor input is ever rendered into a page: content is escaped at build time, and <code>innerHTML</code>{' '}
+          and <code>set:html</code> are never used. The build fails if any page is missing the policy, has an inline
+          script or style without a matching hash, uses inline event handlers or style attributes, links with{' '}
+          <code>javascript:</code> or <code>http:</code>, opens new tabs without <code>noopener noreferrer</code>, or
+          inlines <code>data:</code> URLs in CSS.
+        </p>
+      </section>
+
+      <section id="visitor-privacy" class="detail">
+        <h3>{label('visitor-privacy')} <span class="kicker">{contact ? 'Third parties' : 'No third parties'}</span></h3>
+        {contact ? (
           <p>
             Fonts are self-hosted, and there are no analytics, trackers or ads. Browsing the site talks only to this
             site. Cloudflare Turnstile loads only once you start using the contact form, and a message you send passes
-            through Vercel (the function), Upstash (rate limiting, storing only a hashed IP) and Resend (email delivery).
-            The one thing this site stores on your device is your light or dark theme choice, in your browser's local
-            storage.
+            through Vercel (the function), Upstash (rate limiting, storing only a hashed IP) and Resend (email
+            delivery). The one thing this site stores on your device is your light or dark theme choice, in your
+            browser's local storage.
           </p>
-          <h2>The contact form</h2>
+        ) : (
+          <p>
+            Fonts are self-hosted, and there are no analytics, trackers, ads or embedded widgets. Your browser talks
+            only to this site. The one thing stored on your device is your light or dark theme choice, kept in your
+            browser's local storage.
+          </p>
+        )}
+      </section>
+
+      {has('contact-form') && (
+        <section id="contact-form" class="detail">
+          <h3>{label('contact-form')} <span class="kicker">Serverless API on Vercel</span></h3>
           <dl class="gates">
             {contactControls.map(([name, detail]) => (
               <div class="card">
@@ -69,27 +105,40 @@ const contactControls = [
               </div>
             ))}
           </dl>
-        </>
-      ) : (
-        <>
-          <h2>No third parties</h2>
-          <p>
-            Fonts are self-hosted, and there are no analytics, trackers, ads or embedded widgets. Your browser talks
-            only to this site. The one thing stored on your device is your light or dark theme choice, kept in your
-            browser's local storage.
-          </p>
-        </>
+        </section>
       )}
 
-      <h2>What every change has to pass</h2>
-      <dl class="gates">
-        {gates.map(([name, detail]) => (
-          <div class="card">
-            <dt>{name}</dt>
-            <dd>{detail}</dd>
-          </div>
-        ))}
-      </dl>
+      <section id="outside-code" class="detail">
+        <h3>{label('outside-code')} <span class="kicker">Supply chain</span></h3>
+        <ul class="facts">
+          <li>npm dependencies are pinned to exact versions with lockfiles and installed with <code>npm ci --ignore-scripts</code>, so no package can run install scripts.</li>
+          <li>Every CI run checks them with <code>npm audit</code> and verifies registry signatures with <code>npm audit signatures</code>. Dependabot proposes updates weekly.</li>
+          <li>GitHub Actions are pinned to full commit SHAs rather than movable tags, and workflow tokens default to no permissions.</li>
+          <li>CodeQL scans every pull request, and OpenSSF Scorecard grades the repository weekly.</li>
+          {contact && (
+            <li>Cloudflare Turnstile's script is the one exception: Cloudflare requires it to be loaded live, so it can't be pinned. The CSP limits it to <code>challenges.cloudflare.com</code>, and it loads only when someone uses the form.</li>
+          )}
+        </ul>
+      </section>
+
+      <section id="data-leaks" class="detail">
+        <h3>{label('data-leaks')} <span class="kicker">Secrets and personal data</span></h3>
+        <ul class="facts">
+          <li>A PII scan runs in a pre-commit hook on my machine and again in CI, over the repository and the built site. It looks for email addresses, phone numbers and dates of birth, and locally for the exact values of my private contact details.</li>
+          <li>gitleaks scans the full git history for leaked keys and passwords on every run.</li>
+          <li>My personal contact details live in a file git ignores, and commits use GitHub's no-reply address.</li>
+          <li>Deployment uses a short-lived OIDC token rather than a stored key, and <code>main</code> only accepts pull requests that pass the required checks.</li>
+        </ul>
+      </section>
+
+      <section id="accuracy" class="detail">
+        <h3>{label('accuracy')} <span class="kicker">Content provenance</span></h3>
+        <ul class="facts">
+          <li>Every build compares the site's work history, titles, dates, bullets and certifications with my LaTeX resume, word for word and in both directions, including bold emphasis.</li>
+          <li>Every skill and tool shown must appear in the resume. A number in any site wording must appear in the resume lines it cites, so metrics can't be invented.</li>
+          <li>Every piece of wording written for the site must be approved by me before it can deploy, and the share image is rebuilt whenever my name, title or tagline changes.</li>
+        </ul>
+      </section>
 
       <h2>Known limits</h2>
       <p>
@@ -115,10 +164,30 @@ const contactControls = [
   .prose h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
   .prose h2 { font-size: 1.45rem; margin-top: 2.2em; }
   code { font-family: var(--font-mono); font-size: 0.88em; }
-  .csp { padding: 16px 20px; display: grid; gap: 6px; }
+
+  .summary { padding: 8px 20px; }
+  .summary li { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; padding: 14px 0; border-top: 1px solid var(--border); }
+  .summary li:first-child { border-top: 0; }
+  .ok { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: #06121a; background: #69db7c; padding: 1px 6px; border-radius: 4px; margin-top: 4px; }
+  .label { margin: 0; font-weight: 700; }
+  .plain { margin: 2px 0 0; color: var(--text-muted); }
+  .more { font-size: 0.85rem; font-weight: 600; white-space: nowrap; color: var(--appsec); margin-top: 3px; }
+
+  .details-title { margin-top: 2.6em; }
+  .detail { scroll-margin-top: 80px; margin-top: 1.8em; }
+  .detail h3 { font-size: 1.2rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .kicker { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
+  .csp { padding: 16px 20px; display: grid; gap: 6px; margin-bottom: 1em; }
   .csp code { color: var(--appsec); }
+  .facts { list-style: disc; padding-left: 1.2em; display: grid; gap: 8px; }
+  .facts li { padding-left: 4px; }
   .gates { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 0; }
   .gates div { padding: 18px 20px; }
   .gates dt { font-weight: 700; margin-bottom: 6px; }
   .gates dd { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+
+  @media (max-width: 600px) {
+    .summary li { grid-template-columns: auto 1fr; }
+    .more { grid-column: 2; margin-top: 0; }
+  }
 </style>

@@ -64,6 +64,12 @@ export function checkHtml(html) {
     if (!styleSrc.includes(sha256(m[1]))) errors.push(`inline <style> not covered by a CSP hash`);
   }
 
+  // In-page links must point at an element that exists on the same page.
+  const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+  for (const [, target] of html.matchAll(/\shref="#([^"]+)"/g)) {
+    if (!ids.has(target)) errors.push(`broken in-page link: #${target}`);
+  }
+
   // House style: no em dashes anywhere on the site, literal or as entities.
   if (/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push('page contains an em dash');
 
