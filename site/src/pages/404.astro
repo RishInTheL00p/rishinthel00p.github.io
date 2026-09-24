@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found" noindex>
+  <section class="section">
+    <div class="container nf">
+      <p class="eyebrow">404</p>
+      <h1>This page is out of the loop.</h1>
+      <p class="lede">The page you were looking for doesn't exist.</p>
+      <a class="btn btn-primary" href="/">Back to home</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); }
+</style>

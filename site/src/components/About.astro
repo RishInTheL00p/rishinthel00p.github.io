@@ -1,0 +1,20 @@
+---
+import Rich from './Rich.astro';
+import { resume } from '../lib/content.ts';
+---
+<section id="about" class="section">
+  <div class="container about reveal">
+    <div>
+      <p class="eyebrow">About</p>
+      <h2>Background</h2>
+    </div>
+    <p class="summary"><Rich text={resume.basics.summary} /></p>
+  </div>
+</section>
+
+<style>
+  .about { display: grid; grid-template-columns: 0.6fr 1.4fr; gap: clamp(20px, 4vw, 56px); }
+  .summary { font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--text-muted); margin: 0; }
+  .summary :global(strong) { color: var(--text); }
+  @media (max-width: 760px) { .about { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,17 @@
+---
+import { resume } from '../lib/content.ts';
+---
+<section id="beyond" class="section">
+  <div class="container">
+    <p class="eyebrow">Beyond work</p>
+    <h2>Interests</h2>
+    <ul class="interests">
+      {resume.interests.map((i) => <li class="card reveal">{i.text}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .interests { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 28px; }
+  .interests li { padding: 22px 24px; font-size: 1.05rem; }
+</style>

@@ -1,0 +1,179 @@
+/* ---------- Tokens ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --bg-elev: #ffffff;
+  --bg-sunken: #eceef2;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --border: #d9dee6;
+  --focus: #2563eb;
+
+  /* Pillars share lightness and weight; only hue differs. */
+  --ai: #6d28d9;
+  --appsec: #0e7490;
+  --vm: #b45309;
+  --human: #be185d;
+  --ai-soft: color-mix(in srgb, var(--ai) 10%, transparent);
+  --appsec-soft: color-mix(in srgb, var(--appsec) 10%, transparent);
+  --vm-soft: color-mix(in srgb, var(--vm) 10%, transparent);
+  --human-soft: color-mix(in srgb, var(--human) 10%, transparent);
+
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px rgb(15 23 42 / 0.06);
+  --max: 1120px;
+  --gutter: clamp(16px, 4vw, 32px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0a0e16;
+    --bg-elev: #111723;
+    --bg-sunken: #070a10;
+    --text: #e6e9ef;
+    --text-muted: #9aa5b5;
+    --border: #232c3b;
+    --focus: #60a5fa;
+    --ai: #b197fc;
+    --appsec: #3bc9db;
+    --vm: #fcc419;
+    --human: #f783ac;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a0e16;
+  --bg-elev: #111723;
+  --bg-sunken: #070a10;
+  --text: #e6e9ef;
+  --text-muted: #9aa5b5;
+  --border: #232c3b;
+  --focus: #60a5fa;
+  --ai: #b197fc;
+  --appsec: #3bc9db;
+  --vm: #fcc419;
+  --human: #f783ac;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px rgb(0 0 0 / 0.35);
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+h1, h2, h3, h4 { line-height: 1.2; margin: 0 0 0.5em; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.25rem); }
+h3 { font-size: 1.2rem; }
+p { margin: 0 0 1em; }
+a { color: inherit; text-underline-offset: 3px; }
+strong { font-weight: 650; }
+ul, ol { padding: 0; margin: 0; list-style: none; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+
+.skip-link {
+  position: absolute; left: 12px; top: -48px; z-index: 100;
+  background: var(--bg-elev); padding: 8px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.skip-link:focus { top: 12px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.section { padding: clamp(56px, 9vw, 104px) 0; }
+.section + .section { border-top: 1px solid var(--border); }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;
+}
+.eyebrow::before { content: '// '; opacity: 0.6; }
+.lede { color: var(--text-muted); max-width: 62ch; }
+
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.chip {
+  display: inline-flex; align-items: center;
+  font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.2;
+  padding: 5px 10px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg-sunken);
+  white-space: nowrap;
+}
+.chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 18px; border-radius: 999px; font-weight: 600; font-size: 0.95rem;
+  text-decoration: none; border: 1px solid var(--border); background: var(--bg-elev);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover { transform: translateY(-1px); border-color: var(--text-muted); }
+.btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn svg { width: 18px; height: 18px; }
+
+/* Disclosure used for bullets: headline first, verbatim text on expand. */
+.bullet { border-top: 1px solid var(--border); }
+.bullet:first-child { border-top: 0; }
+.bullet summary {
+  cursor: pointer; list-style: none; padding: 12px 28px 12px 0; position: relative; font-weight: 600;
+}
+.bullet summary::-webkit-details-marker { display: none; }
+.bullet summary::after {
+  content: '+'; position: absolute; right: 4px; top: 10px;
+  font-family: var(--font-mono); color: var(--text-muted); transition: transform 0.2s ease;
+}
+.bullet[open] summary::after { transform: rotate(45deg); }
+.bullet p { color: var(--text-muted); margin: 0 0 14px; font-size: 0.97rem; }
+.bullet p strong { color: var(--text); }
+
+/* Reveal on scroll, only once the reveal script has confirmed it is running. */
+.reveal-ready .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal-ready .reveal.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal-ready .reveal { opacity: 1; transform: none; }
+}
+
+@media print {
+  :root { --bg: #fff; --bg-elev: #fff; --bg-sunken: #fff; --text: #000; --text-muted: #333; --border: #ccc; --shadow: none; }
+  .no-print, .site-header, .skip-link { display: none !important; }
+  .section { padding: 16px 0; break-inside: avoid-page; }
+  .card { box-shadow: none; }
+  a { text-decoration: none; }
+}
+
+/* Grid and flex children may shrink below their content width, so long
+   no-wrap lines (terminal, chips) can't push the page wider than the screen. */
+.container > *,
+[class*='-grid'] > *,
+.pillars > *,
+.about > *,
+.entry > * { min-width: 0; }

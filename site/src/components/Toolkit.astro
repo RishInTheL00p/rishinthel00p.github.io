@@ -1,0 +1,59 @@
+---
+import { resume, copy } from '../lib/content.ts';
+const groups = resume.skills.map((g) => ({ ...g, label: copy(`skills.${g.group}`) }));
+---
+<section id="toolkit" class="section">
+  <div class="container">
+    <p class="eyebrow">Toolkit</p>
+    <h2>Skills and tools</h2>
+    <div class="filters no-print" data-filters hidden>
+      <button type="button" class="filter" data-filter="all" aria-pressed="true">All</button>
+      {groups.map((g) => (
+        <button type="button" class="filter" data-filter={g.group} aria-pressed="false">{g.label}</button>
+      ))}
+    </div>
+    <div class="grid" data-groups aria-live="polite">
+      {groups.map((g) => (
+        <div class={`group card reveal k-${g.group}`} data-group={g.group}>
+          <h3>{g.label}</h3>
+          <ul class="chip-list">{g.items.map((s) => <li class="chip">{s}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-filters]');
+  if (bar) {
+    const buttons = [...bar.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')];
+    bar.hidden = false;
+    bar.addEventListener('click', (e) => {
+      const btn = (e.target as Element).closest<HTMLButtonElement>('[data-filter]');
+      if (!btn) return;
+      const f = btn.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      groups.forEach((g) => (g.hidden = f !== 'all' && g.dataset.group !== f));
+    });
+  }
+</script>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 22px; }
+  .filters[hidden] { display: none; }
+  .filter {
+    padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elev);
+    font-size: 0.88rem; font-weight: 600; color: var(--text-muted); cursor: pointer;
+  }
+  .filter[aria-pressed='true'] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; margin-top: 28px; }
+  .filters:not([hidden]) + .grid { margin-top: 0; }
+  .group { padding: 20px 22px; border-top: 3px solid var(--k, var(--border)); }
+  .group[hidden] { display: none; }
+  .group h3 { font-size: 1.05rem; margin-bottom: 14px; }
+  .k-ai-security { --k: var(--ai); }
+  .k-application-security { --k: var(--appsec); }
+  .k-vulnerability-management { --k: var(--vm); }
+  @media (max-width: 400px) { .grid { grid-template-columns: 1fr; } }
+</style>

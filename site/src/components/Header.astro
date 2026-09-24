@@ -1,0 +1,89 @@
+---
+import { copy } from '../lib/content.ts';
+const links = [
+  { href: '/#pillars', label: 'Pillars' },
+  { href: '/#experience', label: 'Experience' },
+  { href: '/#toolkit', label: 'Toolkit' },
+  { href: '/#certifications', label: 'Certifications' },
+  { href: '/#contact', label: 'Contact' },
+];
+---
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="/" aria-label={`${copy('site.name')}, home`}>
+      <svg viewBox="0 0 64 64" aria-hidden="true" class="brand-mark">
+        <g fill="none" stroke-width="5">
+          <circle cx="32" cy="23" r="15" class="r-ai" />
+          <circle cx="23" cy="39" r="15" class="r-appsec" />
+          <circle cx="41" cy="39" r="15" class="r-vm" />
+        </g>
+        <circle cx="32" cy="34" r="4.5" class="r-human" />
+      </svg>
+      <span>{copy('site.name')}</span>
+    </a>
+    <nav aria-label="Sections">
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-moon"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-sun"><circle cx="12" cy="12" r="4.5" /><path d="M12 1.5v3M12 19.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1.5 12h3M19.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" /></svg>
+    </button>
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  if (btn) {
+    const root = document.documentElement;
+    const isDark = () =>
+      root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    const sync = () => btn.setAttribute('aria-pressed', String(isDark()));
+    btn.hidden = false;
+    sync();
+    btn.addEventListener('click', () => {
+      const next = isDark() ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        /* Storage unavailable: the choice lasts for this page view only. */
+      }
+      sync();
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar { display: flex; align-items: center; gap: 24px; height: 60px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; letter-spacing: -0.01em; }
+  .brand-mark { width: 28px; height: 28px; }
+  .r-ai { stroke: var(--ai); }
+  .r-appsec { stroke: var(--appsec); }
+  .r-vm { stroke: var(--vm); }
+  .r-human { fill: var(--human); }
+  nav { margin-left: auto; }
+  nav ul { display: flex; gap: 22px; }
+  nav a { text-decoration: none; color: var(--text-muted); font-size: 0.93rem; font-weight: 500; }
+  nav a:hover { color: var(--text); }
+  .theme-toggle {
+    display: inline-grid; place-items: center; width: 38px; height: 38px;
+    border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elev); cursor: pointer;
+  }
+  .theme-toggle[hidden] { display: none; }
+  .theme-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .icon-sun { display: none; }
+  .theme-toggle[aria-pressed='true'] .icon-sun { display: block; }
+  .theme-toggle[aria-pressed='true'] .icon-moon { display: none; }
+  @media (max-width: 760px) {
+    nav { display: none; }
+    .theme-toggle { margin-left: auto; }
+  }
+</style>

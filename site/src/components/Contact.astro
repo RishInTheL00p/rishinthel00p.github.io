@@ -1,0 +1,24 @@
+---
+import { resume } from '../lib/content.ts';
+const links = resume.basics.profiles;
+---
+<section id="contact" class="section">
+  <div class="container contact reveal">
+    <p class="eyebrow">Contact</p>
+    <h2>Get in touch</h2>
+    <p class="lede">Connect on LinkedIn or browse GitHub.</p>
+    <div class="actions">
+      {links.map((l, i) => (
+        <a class={`btn ${i === links.length - 1 ? 'btn-primary' : ''}`} href={l.url} rel="noopener noreferrer" target="_blank">
+          {l.network}
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { text-align: center; }
+  .contact .lede { margin: 0 auto 24px; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+</style>

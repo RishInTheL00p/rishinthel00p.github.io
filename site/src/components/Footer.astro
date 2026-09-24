@@ -1,0 +1,19 @@
+---
+import { resume, siteRepoUrl } from '../lib/content.ts';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container foot">
+    <p>© {year} {resume.basics.name}</p>
+    <p class="meta">
+      Every fact on this site is checked against the resume on each build.{" "}
+      <a href={siteRepoUrl} rel="noopener noreferrer" target="_blank">View source</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--text-muted); font-size: 0.9rem; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+  .foot p { margin: 0; }
+</style>

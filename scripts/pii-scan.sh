@@ -10,6 +10,11 @@
 set -euo pipefail
 
 mode="${1:---all}"
+scan_dir=""
+if [[ "$mode" == "--dir" ]]; then
+  [[ -d "${2:-}" ]] || { echo "pii-scan: directory not found: ${2:-}" >&2; exit 2; }
+  scan_dir="$(cd "$2" && pwd)" # resolve before changing directory
+fi
 root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$root"
 
@@ -33,7 +38,7 @@ list_files() {
   case "$mode" in
     --staged) git diff --cached --name-only --diff-filter=ACMR -z ;;
     --all)    git ls-files -z --cached --others --exclude-standard ;;
-    --dir)    find "${2:?--dir needs a path}" -type f -print0 ;;
+    --dir)    find "$scan_dir" -type f -print0 ;;
     *) echo "unknown mode: $mode" >&2; exit 2 ;;
   esac
 }
@@ -50,9 +55,9 @@ report() { echo "  PII [$2] $1:$3"; findings=$((findings + 1)); }
 
 while IFS= read -r -d '' f; do
   [[ "$f" == "$SELF" ]] && continue
+  # Skip binary files (fonts, images) before loading them into a variable.
+  read_file "$f" 2>/dev/null | grep -qI . || continue
   content="$(read_file "$f" 2>/dev/null)" || continue
-  # Skip binary files.
-  printf '%s' "$content" | grep -qI . || continue
 
   while IFS=: read -r line match; do
     [[ -z "$line" ]] && continue
