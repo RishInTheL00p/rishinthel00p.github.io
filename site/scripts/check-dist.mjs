@@ -53,7 +53,7 @@ export function checkHtml(html) {
   }
 
   const scriptSrc = csp.get('script-src') ?? [];
-  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
     const [, attrs, body] = m;
     if (/\bsrc=/.test(attrs)) continue;
     if (/type="application\/(ld\+)?json"/i.test(attrs)) continue; // data, not executed
