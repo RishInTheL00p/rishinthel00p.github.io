@@ -1,0 +1,209 @@
+%-------------------------
+% Resume in Latex for WS
+% Author : Rishabh
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[pdftex]{hyperref}
+\usepackage{fancyhdr}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.375in}
+\addtolength{\evensidemargin}{-0.375in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[2]{
+  \item\small{
+    \textbf{#1}{: #2 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-4pt}}
+
+\renewcommand{\labelitemii}{$\circ$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  CV STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Contact details live in private/contact.tex (gitignored) and are only
+% included in local builds. The public build omits them.
+\newcommand{\ContactEmail}{}
+\newcommand{\ContactPhone}{}
+\IfFileExists{private/contact.tex}{\input{private/contact.tex}}{}
+
+\begin{document}
+
+%----------HEADING-----------------
+\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+  \textbf{\href{https://github.com/rsg14196}{\Large Rishabh Singh}} & \ContactEmail\\
+  \href{https://www.linkedin.com/in/rishabhsingh14196/}{https://www.linkedin.com/in/rishabhsingh14196/} & \ContactPhone \\ & Location : Vancouver, BC \\
+\end{tabular*}
+
+%------------Background--------------
+\section{Background}
+Rishabh is an experienced \textbf{Security Engineer} with more than \textbf{7 years of expertise} in vulnerability management, DevSecOps, security automation, cloud security, and AI security. Rishabh has built automations to manage and operate vulnerability management program end-to-end owning scanner integrations, triage automation, remediation workflows, and metrics reporting across complex AWS and container-based environments. He brings \textbf{agentic AI} skills experience to security issues, having built custom tooling and \textbf{SOAR} workflows that replace manual processes with automated pipelines across the full SDLC lifecycle. Complemented by practical experience in \textbf{SAST/DAST/SCA}, threat modeling, and translating security findings into actionable outcomes for engineering and leadership stakeholders.
+
+%-----------EDUCATION-----------------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Master of Engineering in Telecommunications and Information Security}{BC, Canada}
+      {University of Victoria, British Columbia}{Sept 2020 -- Aug 2022}
+    \resumeSubheading
+      {Bachelor of Technology in Electronics and Communications Engineering}{Noida, India}
+      {JSS Academy of Technical Education (affiliated with AKTU)}{August 2013 -- June 2017}
+  \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+  \resumeSubheading
+      {Mark Anthony Group}{British Columbia, Canada}
+      {Security Engineer -- AI \& Application Security}{August 2025 - Present}
+      \resumeItemListStart
+      \vspace{5pt}
+          {- \textbf{Owned end-to-end vulnerability management lifecycle} across AWS ECS/EKS and containerized environments — from scanner integration and raw finding enrichment through triage, ownership resolution, SLA tracking, and validated remediation closure; reduced mean-time-to-remediation for critical findings by standardizing workflow automation across the engineering org. \\
+           - Designed and developed \textbf{pipeline-integrated SAST/DAST/SCA gates using Wiz Security in Github Actions}, enforcing policy-as-code to block vulnerable container images from reaching production; ensuring findings surfaced at the right stage (CI, container build, production) with context sufficient for a developer to act without security team involvement by building agentic AI workflow that transformed raw vulnerability output into a prioritized \textbf{Jira} ticket with remediation PR ready for review. \\
+           - \textbf{Developed security workflows} using \textbf{Kiro and Claude Code} to eliminate manual triage steps by automating finding classification, ticket routing, exploitability check, and follow-up escalation across the vulnerability lifecycle using MCP. \\
+           - Built \textbf{vulnerability posture dashboards and automated reports} tracking open findings by severity, age, owner, and SLA status; gave engineering leadership real-time visibility into exposure without manual data aggregation. \\
+           - Performed automated \textbf{penetration testing} against containerized web-apps and AI-driven applications, including novel attack chains against agentic systems; translated confirmed findings into tracked remediation tickets with exploit impact clearly scoped for non-technical stakeholders. \\
+           - Conducted \textbf{security design reviews and threat modeling} (OWASP LLM Top 10, STRIDE) across backend services and AI/ML systems, surfacing architectural risks before production release and influencing remediation decisions at the design stage. \\
+           - Authored \textbf{operational runbooks and secure development standards} adopted org-wide, covering AI acceptable use, MCP governance, and SDLC security requirements for containerized and cloud-native services.\newline }
+    \resumeItemListEnd
+
+    \resumeSubheading
+      {KPMG}{British Columbia, Canada}
+      {Specialist / Sr. Consultant -- Digital Risk and Cyber Security Services}{May 2022 - Aug 2025}
+      \resumeItemListStart
+      \vspace{5pt}
+          {- Designed and implemented \textbf{DevSecOps} pipelines across client AWS environments using \textbf{CodePipeline, CloudWatch, SecurityHub, ECS, and EKS}, embedding \textbf{SAST/DAST/SCA} scanner gates at CI, container build, and production stages; reduced time-to-remediation for critical vulnerabilities by shifting triage left into developer workflows. \\
+           - \textbf{Developed Python automation} to drive vulnerability triage across client environments; built integrations that ingested scanner findings from \textbf{Nessus, Tenable, and Invicti}, normalized and deduplicated results, and routed tickets to the correct engineering teams without manual intervention. \\
+           - Performed \textbf{SAST and DAST} against containerized web applications using \textbf{Docker, Wiz, and Tenable}; wrote custom scripts to parse and enrich scanner output, integrating confirmed findings directly into \textbf{Jira and ServiceNow ticketing} systems. \\
+           - Led \textbf{penetration testing engagements} against web applications using \textbf{Burp Suite, Nessus, and Kali Linux}; created exploit chains that delivered confirmed CVEs with CVSS-scored prioritization and remediation guidance scoped for non-technical stakeholders. \\
+           - Conducted \textbf{threat modeling (STRIDE)} to influence architecture decisions and secure the design stage of new services across multiple client organizations; assessed vulnerability classes across application and infrastructure layers including XSS, CSRF, injection, and container escape paths. \\
+           - Assessed and \textbf{developed security metrics and dashboards} aligned to \textbf{NIST CSF, ISO 27001/27002, CIS Top 18, and PCI DSS}; tracked vulnerability trends, SLA compliance, and control effectiveness to give clients and leadership clear visibility into security posture. \\
+           - Performed \textbf{Security Threat Risk Assessments (STRAs)} on mobile and web applications to identify data protection and privacy gaps, producing risk acceptance documentation for BC Government clients under applicable compliance frameworks. \\
+           }
+    \resumeItemListEnd
+
+    \resumeSubheading
+      {Nokia}{Ottawa, Canada}
+      {Malware Research Analyst Co-op}{Sept 2021 - Apr 2022}
+      \resumeItemListStart
+      \vspace{5pt}
+          {- Performed \textbf{static and dynamic malware analysis} for Nokia's Cyber Threat Intelligence team; analyzed malware code and behavior using \textbf{OllyDBG, WinDBG, IDA Pro, and Wireshark}, and executed threats in sandboxed environments to review behavioral patterns. \\
+           - Aligned analyzed threats with \textbf{MITRE ATT\&CK TTPs} and designed detection and mitigation measures using IDS/IPS tools including \textbf{Snort}. \\
+           - \textbf{Built automation} to optimize Snort signature deployment using \textbf{Bash scripting}, improving detection coverage and reducing manual deployment overhead.\newline }
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Ericsson}{Noida, India}
+      {Network Engineer}{Feb 2018 - Jun 2020}
+      \resumeItemListStart
+      \vspace{5pt}
+          {- Performed \textbf{root cause analysis} for confirmed network anomalies using \textbf{Python scripts}, automating log analysis across complex telecom environments. \\
+           - Reviewed and analyzed network parameters and performed \textbf{live network troubleshooting} to provide recommendations that improved network deployment security posture and hardware/software configurations. \\
+           - Conducted post-commissioning \textbf{data analysis and live troubleshoots} on 4G and 5G telecom sites to track threats and security issues. }
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+% --------PROGRAMMING SKILLS------------
+\section{Skills}
+ \resumeSubHeadingListStart
+   \item{
+     \textbf{Languages / Scripting}{: Python, Bash, Powershell}
+   }
+   \vspace{-8pt}
+   \item{
+     \textbf{Vulnerability Management}{: Tenable (Nessus), Wiz Security}
+   }
+   \vspace{-8pt}
+   \item{
+     \textbf{Security Testing}{: Burp Suite, Semgrep, Socket, Snyk, Nmap, OWASP Zap, Kali Linux}
+   }
+   \vspace{-8pt}
+   \item{
+     \textbf{SOAR / Automation}{: Claude Code, Tracecat, n8n, Langflow}
+   }
+   \vspace{-8pt}
+   \item{
+     \textbf{CI/CD and Container Security}{: GitHub Actions, Docker, Kubernetes, AWS CodePipeline}
+   }
+   \vspace{-8pt}
+   \item{
+     \textbf{Cloud Technology}{: AWS, Azure, Wiz Security}
+   }
+   \vspace{-8pt}
+   \item{
+     \textbf{Frameworks}{: NIST CSF, STRIDE, MAESTRO, MITRE ATT\&CK, OWASP, ISO 27001, PCI DSS}
+   }
+   
+ \resumeSubHeadingListEnd
+
+
+%-----------ACHIEVEMENTS-----------------
+\section{Certificates/Awards}
+  \resumeSubHeadingListStart
+    \item{\textbf{AWS Certified AI Practitioner} - March 2026} \vspace{-8pt}
+    \item{\textbf{ISC2 - Certified Cloud Security Professional (CCSP)} - Aug 2025} \vspace{-8pt}
+    \item{\textbf{CompTIA Security+} - July 2024} \vspace{-8pt}
+    \item{\textbf{Microsoft Certified} - Azure Fundamentals (AZ-900) - August 2022} \vspace{-8pt}
+    \item{\textbf{Cisco Certified Network Associate (CCNA)} - Routing and Switching - November 2019} \vspace{-8pt}
+  \resumeSubHeadingListEnd
+
+%-----------Activities/Interests-----------------
+\section{Activities/Interests}
+  \resumeSubHeadingListStart
+    \item{Actively research adversarial attacks against AI agents to demonstrate why Human-in-the-loop controls are essential in production AI systems} \vspace{-8pt}
+    \item{Watch and play soccer religiously}\vspace{-1pt}
+  \resumeSubHeadingListEnd
+
+\end{document}

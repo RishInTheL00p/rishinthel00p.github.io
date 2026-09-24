@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Enabled with: git config core.hooksPath .githooks
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+
+bash "$root/scripts/pii-scan.sh" --staged
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner "$root"
+else
+  echo "pre-commit: gitleaks not installed locally; CI will run it."
+fi

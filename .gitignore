@@ -1,0 +1,32 @@
+# --- Personal data: never commit ---
+resume/private/
+*.pdf
+
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+.vercel/
+
+# --- Build output and dependencies ---
+node_modules/
+dist/
+.astro/
+
+# --- LaTeX build artifacts ---
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+
+# --- Editor / OS ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Private planning notes (local only) ---
+docs/ARCHITECTURE.md
