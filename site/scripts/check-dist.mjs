@@ -69,7 +69,7 @@ export function checkHtml(html) {
   let previous;
   do {
     previous = withoutScripts;
-    withoutScripts = withoutScripts.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+    withoutScripts = withoutScripts.replace(/<script\b[\s\S]*?<\/script\b[^>]*>/gi, '');
   } while (withoutScripts !== previous);
   for (const [tag] of withoutScripts.matchAll(/<[a-z][a-z0-9-]*\b[^>]*>/gi)) {
     if (/\sstyle\s*=/i.test(tag)) errors.push(`inline style attribute: ${tag.slice(0, 80)}`);
