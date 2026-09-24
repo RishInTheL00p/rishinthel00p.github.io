@@ -15,6 +15,9 @@ concurrency:
 
 env:
   ASTRO_TELEMETRY_DISABLED: 1
+  # Public values (repository variables). When unset, the site builds without the contact form.
+  PUBLIC_CONTACT_API_URL: ${{ vars.PUBLIC_CONTACT_API_URL }}
+  PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
 
 jobs:
   content:
@@ -50,6 +53,31 @@ jobs:
       - name: PII scan of build output
         working-directory: .
         run: bash scripts/pii-scan.sh --dir site/dist
+
+  contact-api:
+    name: contact api
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: contact-api
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: contact-api/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm audit --audit-level=high
+      - run: npm audit signatures
+      - name: Type check
+        run: npm run typecheck
+      - name: Handler and service tests
+        run: npm test
 
   privacy:
     name: privacy and secrets

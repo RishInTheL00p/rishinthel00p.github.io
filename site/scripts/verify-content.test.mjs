@@ -87,3 +87,7 @@ test('copy containing an em dash fails', () => {
 test('a missing interest wording fails', () => {
   expectError(run((i) => { delete i.copy['interest.soccer']; }), /missing "interest\.soccer"/);
 });
+
+test('"site" as a source only exempts wording that cites nothing else', () => {
+  expectError(run((i) => { i.copy['headline.mag-4'] = { text: 'Cut exposure by 60%', sources: ['site', 'mag-4'], approved: true }; }), /number "60%"/);
+});

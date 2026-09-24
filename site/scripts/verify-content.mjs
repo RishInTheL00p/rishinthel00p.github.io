@@ -132,6 +132,8 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
 
   // ---------- Site-authored copy ----------
   const sourceText = new Map([
+    // Wording about how the site itself works (not claims about me).
+    ['site', ''],
     ['basics.title', resume.basics.title],
     ['basics.summary', resume.basics.summary],
     ...bullets,
@@ -144,7 +146,7 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
   for (const src of pillars.centre.sources) if (!sourceText.has(src)) fail(`pillars.centre: unknown source "${src}"`);
 
   const required = [
-    'site.name', 'hero.tagline', 'about.body', 'centre.title', 'centre.body', 'centre.research',
+    'site.name', 'hero.tagline', 'about.body', 'centre.title', 'centre.body', 'centre.research', 'contact.privacy',
     ...pillars.pillars.flatMap((p) => [`pillar.${p.id}.title`, `pillar.${p.id}.summary`]),
     ...resume.skills.map((g) => `skills.${g.group}`),
     ...[...bullets.keys()].map((b) => `headline.${b}`),
@@ -157,7 +159,8 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
     if (unknown.length) fail(`copy "${key}": unknown source(s) ${unknown.join(', ')}`);
     // Guard against invented metrics: every number must come from a cited source.
     const cited = entry.sources.map((s) => sourceText.get(s) ?? '').join(' ');
-    for (const num of entry.text.match(/\d+(?:[.,]\d+)?%?/g) ?? []) {
+    const aboutTheSite = entry.sources.length === 1 && entry.sources[0] === 'site';
+    for (const num of aboutTheSite ? [] : entry.text.match(/\d+(?:[.,]\d+)?%?/g) ?? []) {
       if (!cited.includes(num)) fail(`copy "${key}": number "${num}" does not appear in its sources`);
     }
     // House style: the site never uses em dashes.

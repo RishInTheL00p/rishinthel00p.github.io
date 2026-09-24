@@ -16,6 +16,9 @@ concurrency:
 
 env:
   ASTRO_TELEMETRY_DISABLED: 1
+  # Public values (repository variables). When unset, the site deploys without the contact form.
+  PUBLIC_CONTACT_API_URL: ${{ vars.PUBLIC_CONTACT_API_URL }}
+  PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
 
 jobs:
   build:

@@ -1,24 +1,204 @@
 ---
-import { resume } from '../lib/content.ts';
+import { resume, copy, contact } from '../lib/content.ts';
 const links = resume.basics.profiles;
 ---
 <section id="contact" class="section">
   <div class="container contact reveal">
     <p class="eyebrow">Contact</p>
     <h2>Get in touch</h2>
-    <p class="lede">LinkedIn is the best place to reach me, and my GitHub is right next to it.</p>
+    <p class="lede">
+      {contact
+        ? 'Send me a message here, or find me on LinkedIn and GitHub.'
+        : 'LinkedIn is the best place to reach me, and my GitHub is right next to it.'}
+    </p>
+
+    {contact && (
+      <form
+        class="contact-form card no-print"
+        data-contact-form
+        data-api={contact.apiUrl}
+        data-sitekey={contact.siteKey}
+        novalidate
+        hidden
+      >
+        <div class="row">
+          <label>
+            <span>Name</span>
+            <input name="name" type="text" autocomplete="name" required maxlength="100" />
+          </label>
+          <label>
+            <span>Email</span>
+            <input name="email" type="email" autocomplete="email" required maxlength="254" />
+          </label>
+        </div>
+        <label>
+          <span>Message</span>
+          <textarea name="message" required minlength="20" maxlength="2000" rows="5"></textarea>
+        </label>
+        <label class="hp" aria-hidden="true">
+          <span>Website</span>
+          <input name="website" type="text" tabindex="-1" autocomplete="off" />
+        </label>
+        <div class="turnstile" data-turnstile></div>
+        <div class="actions-row">
+          <button class="btn btn-primary" type="submit">Send message</button>
+          <p class="status" role="status" aria-live="polite" data-status></p>
+        </div>
+        <p class="privacy">{copy('contact.privacy')}</p>
+      </form>
+    )}
+
     <div class="actions">
-      {links.map((l, i) => (
-        <a class={`btn ${i === links.length - 1 ? 'btn-primary' : ''}`} href={l.url} rel="noopener noreferrer" target="_blank">
-          {l.network}
-        </a>
+      {links.map((l) => (
+        <a class="btn" href={l.url} rel="noopener noreferrer" target="_blank">{l.network}</a>
       ))}
     </div>
   </div>
 </section>
 
+<script>
+  type Turnstile = {
+    render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+    reset: (id: string) => void;
+  };
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const api = form.dataset.api!;
+    const sitekey = form.dataset.sitekey!;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const widgetEl = form.querySelector<HTMLElement>('[data-turnstile]')!;
+    let token = '';
+    let widgetId: string | undefined;
+    let loading: Promise<Turnstile> | undefined;
+
+    const say = (text: string, kind: 'info' | 'ok' | 'error' = 'info') => {
+      status.textContent = text; // never innerHTML
+      status.dataset.kind = kind;
+    };
+    const unavailable = "The human check couldn't load. Please reach me on LinkedIn instead.";
+
+    // Cloudflare's script is loaded only once someone starts using the form.
+    const loadTurnstile = () =>
+      (loading ??= new Promise<Turnstile>((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        s.async = true;
+        s.onload = () => {
+          const t = (window as unknown as { turnstile?: Turnstile }).turnstile;
+          if (t) resolve(t);
+          else reject(new Error('turnstile missing'));
+        };
+        s.onerror = () => reject(new Error('turnstile failed to load'));
+        document.head.appendChild(s);
+      }));
+
+    const startCheck = async () => {
+      if (widgetId !== undefined) return;
+      try {
+        const t = await loadTurnstile();
+        widgetId ??= t.render(widgetEl, {
+          sitekey,
+          action: 'contact',
+          theme: 'auto',
+          callback: (value: string) => (token = value),
+          'expired-callback': () => (token = ''),
+          'error-callback': () => {
+            token = '';
+            say(unavailable, 'error');
+          },
+        });
+      } catch {
+        say(unavailable, 'error');
+      }
+    };
+
+    const resetCheck = () => {
+      token = '';
+      const t = (window as unknown as { turnstile?: Turnstile }).turnstile;
+      if (t && widgetId !== undefined) t.reset(widgetId);
+    };
+
+    const messages: Record<string, string> = {
+      invalid_input: 'Please check the fields: a valid email and a message of at least 20 characters.',
+      rate_limited: "You've sent a few messages already. Please try again a little later.",
+      bot_check_failed: "The human check didn't pass. Please try again.",
+    };
+    const failed = "Your message couldn't be sent right now. Please reach me on LinkedIn instead.";
+
+    form.hidden = false;
+    form.addEventListener('focusin', startCheck, { once: true });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      if (!token) {
+        say('Still checking that you are human. One moment, then try again.');
+        startCheck();
+        return;
+      }
+      const data = new FormData(form);
+      const payload = {
+        name: String(data.get('name') ?? ''),
+        email: String(data.get('email') ?? ''),
+        message: String(data.get('message') ?? ''),
+        website: String(data.get('website') ?? ''),
+        token,
+      };
+      button.disabled = true;
+      say('Sending...');
+      try {
+        const res = await fetch(api, {
+          method: 'POST',
+          mode: 'cors',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(20000),
+        });
+        const body = (await res.json().catch(() => ({}))) as { ok?: boolean; code?: string };
+        if (res.ok && body.ok) {
+          form.reset();
+          say("Thanks, your message is on its way. I'll get back to you soon.", 'ok');
+        } else {
+          say(messages[body.code ?? ''] ?? failed, 'error');
+        }
+      } catch {
+        say(failed, 'error');
+      } finally {
+        resetCheck(); // tokens are single-use
+        button.disabled = false;
+      }
+    });
+  }
+</script>
+
 <style>
   .contact { text-align: center; }
   .contact .lede { margin: 0 auto 24px; }
   .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .contact-form { text-align: left; max-width: 640px; margin: 0 auto 28px; padding: clamp(20px, 3vw, 28px); display: grid; gap: 16px; position: relative; }
+  .contact-form[hidden] { display: none; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  label { display: grid; gap: 6px; font-size: 0.9rem; font-weight: 600; }
+  input, textarea {
+    font: inherit; font-weight: 400; color: var(--text); background: var(--bg-sunken);
+    border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; width: 100%;
+  }
+  textarea { resize: vertical; min-height: 120px; }
+  input:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .turnstile:empty { display: none; }
+  .actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+  .actions-row .btn { border: 0; cursor: pointer; }
+  .actions-row .btn:disabled { opacity: 0.6; cursor: progress; }
+  .status { margin: 0; font-size: 0.92rem; color: var(--text-muted); }
+  .status[data-kind='ok'] { color: var(--appsec); }
+  .status[data-kind='error'] { color: var(--human); }
+  .privacy { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+  @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
 </style>
