@@ -1,12 +1,12 @@
 ---
-import { resume } from '../lib/content.ts';
+import { resume, copy } from '../lib/content.ts';
 ---
 <section id="beyond" class="section">
   <div class="container">
     <p class="eyebrow">Beyond work</p>
     <h2>Interests</h2>
     <ul class="interests">
-      {resume.interests.map((i) => <li class="card reveal">{i.text}</li>)}
+      {resume.interests.map((i) => <li class="card reveal">{copy(`interest.${i.id}`)}</li>)}
     </ul>
   </div>
 </section>

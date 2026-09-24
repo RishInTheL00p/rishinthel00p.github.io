@@ -1,0 +1,84 @@
+---
+// Describes only what is implemented. The CSP list is imported from the same
+// module astro.config.mjs uses to build the policy.
+import Base from '../layouts/Base.astro';
+import { cspDirectives } from '../lib/csp.mjs';
+import { siteRepoUrl } from '../lib/content.ts';
+
+const gates = [
+  ['Content provenance', 'Work history, skills, dates and credentials must match my resume word for word. Any site wording must cite the resume lines it is based on and be approved by me.'],
+  ['Build output checks', 'Every page needs the CSP, and every inline script and style needs its hash in it. Inline event handlers, inline style attributes, javascript: and http: links, unsafe new-tab links and data: URLs in CSS all fail the build.'],
+  ['Privacy scans', 'The repository, its full git history and the built site are scanned for email addresses, phone numbers and dates of birth, and for leaked secrets with gitleaks.'],
+  ['Dependencies', 'Exact versions with a lockfile, installed with install scripts disabled, then checked with npm audit and npm audit signatures. Dependabot proposes updates weekly.'],
+  ['Code scanning', 'CodeQL on every pull request, and OpenSSF Scorecard weekly.'],
+  ['Pipeline', 'GitHub Actions pinned to commit SHAs, read-only tokens by default, and deployment to GitHub Pages through OIDC. The main branch only accepts pull requests that pass the required checks.'],
+];
+---
+<Base title="How this site is secured | Rish in the Loop" description="The controls protecting this site, and the ones GitHub Pages can't provide.">
+  <section class="section">
+    <div class="container prose">
+      <p class="eyebrow">Security</p>
+      <h1>How this site is secured</h1>
+      <p class="lede">
+        This is a static site: no server, no database, no login and no cookies, so there is very little to attack.
+        Here is what protects what's left, and what I couldn't do on free hosting.
+      </p>
+
+      <h2>Content Security Policy</h2>
+      <p>
+        GitHub Pages can't send HTTP headers, so the policy is delivered in a <code>&lt;meta&gt;</code> tag. Scripts and
+        styles are allowed only from this site, plus a SHA-256 hash for each inline script, computed at build time.
+        There is no <code>'unsafe-inline'</code> anywhere.
+      </p>
+      <ul class="csp card">
+        {cspDirectives.map((d) => <li><code>{d}</code></li>)}
+        <li><code>script-src 'self' 'sha256-…'</code></li>
+        <li><code>style-src 'self'</code></li>
+      </ul>
+
+      <h2>No third parties</h2>
+      <p>
+        Fonts are self-hosted, and there are no analytics, trackers, ads or embedded widgets. Your browser talks only to
+        this site. The one thing stored on your device is your light or dark theme choice, kept in your browser's local
+        storage.
+      </p>
+
+      <h2>What every change has to pass</h2>
+      <dl class="gates">
+        {gates.map(([name, detail]) => (
+          <div class="card">
+            <dt>{name}</dt>
+            <dd>{detail}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <h2>Known limits</h2>
+      <p>
+        A <code>&lt;meta&gt;</code> policy can't include <code>frame-ancestors</code>, and GitHub Pages can't send{' '}
+        <code>X-Frame-Options</code>, so another site could frame this one. With no logins or forms here, there is
+        nothing for a clickjacking attack to trigger. HTTPS and its redirect are handled by GitHub Pages.
+      </p>
+
+      <h2>Found something?</h2>
+      <p>
+        Please report it privately through{' '}
+        <a href={`${siteRepoUrl}/security/advisories/new`} rel="noopener noreferrer" target="_blank">GitHub's private vulnerability reporting</a>.
+        The <a href={`${siteRepoUrl}/security/policy`} rel="noopener noreferrer" target="_blank">security policy</a> has the details.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prose { max-width: 820px; }
+  .prose h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
+  .prose h2 { font-size: 1.45rem; margin-top: 2.2em; }
+  code { font-family: var(--font-mono); font-size: 0.88em; }
+  .csp { padding: 16px 20px; display: grid; gap: 6px; }
+  .csp code { color: var(--appsec); }
+  .gates { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 0; }
+  .gates div { padding: 18px 20px; }
+  .gates dt { font-weight: 700; margin-bottom: 6px; }
+  .gates dd { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+</style>

@@ -1,22 +1,16 @@
 ---
-import { resume, copy, pillarData, statedYears } from '../lib/content.ts';
+import { resume, copy, pillarData, display } from '../lib/content.ts';
 const { basics } = resume;
 const pillarTitles = pillarData.pillars.map((p) => ({ id: p.id, title: copy(`pillar.${p.id}.title`) }));
 const linkedin = basics.profiles.find((p) => p.network === 'LinkedIn');
 const github = basics.profiles.find((p) => p.network === 'GitHub');
-const stats = [
-  { value: `${statedYears()}+`, label: 'years of expertise' },
-  { value: String(resume.experience.length), label: 'employers' },
-  { value: String(resume.certifications.length), label: 'certifications' },
-  { value: String(resume.education.length), label: 'degrees' },
-];
 ---
 <section class="hero">
   <div class="container hero-grid">
     <div class="intro">
       <p class="eyebrow">{basics.location}</p>
       <h1>{basics.name}</h1>
-      <p class="role">{basics.title}</p>
+      <p class="role">{display(basics.title)}</p>
       <p class="tagline">{copy('hero.tagline')}</p>
       <div class="actions no-print">
         <a class="btn btn-primary" href="#pillars">Explore the loop</a>
@@ -34,7 +28,7 @@ const stats = [
       <div class="term-body">
         <p class="cmd l1"><span class="ps" aria-hidden="true">$</span> whoami</p>
         <p class="out l2">{basics.name}</p>
-        <p class="out l3">{basics.title}</p>
+        <p class="out l3">{display(basics.title)}</p>
         <p class="cmd l4"><span class="ps" aria-hidden="true">$</span> ls ./pillars</p>
         <p class="out l5 pillars-out">
           {pillarTitles.map((p) => <span class={`p-${p.id}`}>{p.title}</span>)}
@@ -44,16 +38,6 @@ const stats = [
     </figure>
   </div>
 
-  <div class="container">
-    <dl class="stats">
-      {stats.map((s) => (
-        <div>
-          <dt>{s.label}</dt>
-          <dd>{s.value}</dd>
-        </div>
-      ))}
-    </dl>
-  </div>
 </section>
 
 <style>
@@ -98,17 +82,9 @@ const stats = [
   @keyframes type { to { clip-path: inset(0 0 0 0); } }
   @keyframes blink { 50% { opacity: 0; } }
 
-  .stats {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: clamp(40px, 6vw, 64px) 0 0;
-    background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
-  }
-  .stats div { background: var(--bg-elev); padding: 18px 20px; display: flex; flex-direction: column-reverse; }
-  .stats dt { color: var(--text-muted); font-size: 0.9rem; }
-  .stats dd { margin: 0; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; font-family: var(--font-mono); }
 
   @media (max-width: 860px) {
     .hero-grid { grid-template-columns: 1fr; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) {
     .js .term-body p { clip-path: none; animation: none; }

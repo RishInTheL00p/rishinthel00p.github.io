@@ -144,10 +144,11 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
   for (const src of pillars.centre.sources) if (!sourceText.has(src)) fail(`pillars.centre: unknown source "${src}"`);
 
   const required = [
-    'site.name', 'hero.tagline', 'centre.title', 'centre.body',
+    'site.name', 'hero.tagline', 'about.body', 'centre.title', 'centre.body', 'centre.research',
     ...pillars.pillars.flatMap((p) => [`pillar.${p.id}.title`, `pillar.${p.id}.summary`]),
     ...resume.skills.map((g) => `skills.${g.group}`),
     ...[...bullets.keys()].map((b) => `headline.${b}`),
+    ...resume.interests.map((x) => `interest.${x.id}`),
   ];
   for (const key of required) if (!copy[key]) fail(`copy.json: missing "${key}"`);
 
@@ -159,6 +160,8 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
     for (const num of entry.text.match(/\d+(?:[.,]\d+)?%?/g) ?? []) {
       if (!cited.includes(num)) fail(`copy "${key}": number "${num}" does not appear in its sources`);
     }
+    // House style: the site never uses em dashes.
+    if (/[—]/.test(entry.text)) fail(`copy "${key}": contains an em dash`);
     if (!entry.approved) (allowUnapproved ? warnings : errors).push(`copy "${key}": not yet approved by the owner`);
   }
 

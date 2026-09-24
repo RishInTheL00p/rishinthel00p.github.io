@@ -1,6 +1,6 @@
 ---
 import Rich from './Rich.astro';
-import { resume } from '../lib/content.ts';
+import { copy } from '../lib/content.ts';
 ---
 <section id="about" class="section">
   <div class="container about reveal">
@@ -8,7 +8,7 @@ import { resume } from '../lib/content.ts';
       <p class="eyebrow">About</p>
       <h2>Background</h2>
     </div>
-    <p class="summary"><Rich text={resume.basics.summary} /></p>
+    <p class="summary"><Rich text={copy('about.body')} /></p>
   </div>
 </section>
 

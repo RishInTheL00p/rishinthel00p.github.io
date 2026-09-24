@@ -9,11 +9,16 @@ export const resume = ResumeSchema.parse(resumeRaw);
 export const pillarData = PillarsSchema.parse(pillarsRaw);
 const copyData = CopySchema.parse(copyRaw);
 
+// Local previews of unapproved drafts only. CI runs the strict content check
+// (npm run verify) before building, so drafts can never be deployed.
+const buildEnv = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {};
+const allowDrafts = buildEnv.ALLOW_DRAFT_COPY === '1';
+
 /** Owner-approved site wording. Throws on a missing or unapproved key. */
 export function copy(key: string): string {
   const entry = copyData[key];
   if (!entry) throw new Error(`copy.json: missing "${key}"`);
-  if (!entry.approved) throw new Error(`copy.json: "${key}" is not approved`);
+  if (!entry.approved && !allowDrafts) throw new Error(`copy.json: "${key}" is not approved`);
   return entry.text;
 }
 
@@ -34,9 +39,18 @@ export const interest = (id: string) => {
   return i;
 };
 
+/**
+ * Presentation-only punctuation: a dash used between clauses ("Security
+ * Engineer - AI & Application Security") is shown as a comma. The site never
+ * displays em dashes; check-dist fails the build if one appears.
+ */
+export function display(text: string): string {
+  return text.replace(/\s+[-\u2013\u2014]+\s+/g, ', ').replace(/\u2014/g, ', ');
+}
+
 /** Splits "**bold**" markup into text runs. Rendered as elements, never as HTML. */
 export function richParts(text: string): { text: string; bold: boolean }[] {
-  return text
+  return display(text)
     .split('**')
     .map((t, i) => ({ text: t, bold: i % 2 === 1 }))
     .filter((p) => p.text.length > 0);

@@ -1,6 +1,6 @@
 ---
 import Rich from './Rich.astro';
-import { resume, copy, monthIndex } from '../lib/content.ts';
+import { resume, copy, monthIndex, display } from '../lib/content.ts';
 
 type Entry =
   | { kind: 'work'; id: string; start: string; end: string; org: string; title: string; location: string;
@@ -11,7 +11,7 @@ type Entry =
 // co-op during the M.Eng.) are visible from the dates themselves.
 const entries: Entry[] = [
   ...resume.experience.map((r) => ({
-    kind: 'work' as const, id: r.id, start: r.start, end: r.end, org: r.company, title: r.title, location: r.location,
+    kind: 'work' as const, id: r.id, start: r.start, end: r.end, org: r.company, title: display(r.title), location: r.location,
     bullets: r.bullets.map((b) => ({ ...b, headline: copy(`headline.${b.id}`) })),
   })),
   ...resume.education.map((e) => ({
