@@ -81,7 +81,7 @@ test('a non-https profile URL is rejected', () => {
 });
 
 test('copy containing an em dash fails', () => {
-  expectError(run((i) => { i.copy['hero.tagline'].text = 'Fast security — with a human in the loop.'; }), /em dash/);
+  expectError(run((i) => { i.copy['hero.tagline'].text = 'Fast security \u2014 with a human in the loop.'; }), /em dash/);
 });
 
 test('a missing interest wording fails', () => {
@@ -90,4 +90,8 @@ test('a missing interest wording fails', () => {
 
 test('"site" as a source only exempts wording that cites nothing else', () => {
   expectError(run((i) => { i.copy['headline.mag-4'] = { text: 'Cut exposure by 60%', sources: ['site', 'mag-4'], approved: true }; }), /number "60%"/);
+});
+
+test('changing the tagline without regenerating the share image fails', () => {
+  expectError(run((i) => { i.copy['hero.tagline'].text = 'Something new and shiny.'; }), /share image is stale \(tagline/);
 });
