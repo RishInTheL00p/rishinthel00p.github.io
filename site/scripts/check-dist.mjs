@@ -60,9 +60,12 @@ export function checkHtml(html) {
     if (!scriptSrc.includes(sha256(body))) errors.push(`inline <script> not covered by a CSP hash: ${body.slice(0, 60)}…`);
   }
   const styleSrc = csp.get('style-src') ?? [];
-  for (const m of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)) {
+  for (const m of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gi)) {
     if (!styleSrc.includes(sha256(m[1]))) errors.push(`inline <style> not covered by a CSP hash`);
   }
+
+  // House style: no em dashes anywhere on the site, literal or as entities.
+  if (/—|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push('page contains an em dash');
 
   // Attributes, checked on tag markup only (not text or script bodies).
   let withoutScripts = html;

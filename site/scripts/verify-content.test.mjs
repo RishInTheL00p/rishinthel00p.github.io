@@ -79,3 +79,11 @@ test('an unknown field is rejected', () => {
 test('a non-https profile URL is rejected', () => {
   expectError(run((i) => { i.resume.basics.profiles[0].url = 'http://github.com/rsg14196'; }), /must be https/);
 });
+
+test('copy containing an em dash fails', () => {
+  expectError(run((i) => { i.copy['hero.tagline'].text = 'Fast security — with a human in the loop.'; }), /em dash/);
+});
+
+test('a missing interest wording fails', () => {
+  expectError(run((i) => { delete i.copy['interest.soccer']; }), /missing "interest\.soccer"/);
+});

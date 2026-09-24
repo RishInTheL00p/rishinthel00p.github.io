@@ -1,16 +1,14 @@
 {
   "site.name": { "text": "Rish in the Loop", "sources": ["ai-agents"], "approved": true },
-  "hero.tagline": { "text": "Security Engineer automating vulnerability management, application security and AI security — with a human in the loop.", "sources": ["basics.title", "basics.summary", "mag-2", "ai-agents"], "approved": true },
-
-  "pillar.ai-security.title": { "text": "AI Security", "sources": ["basics.title", "basics.summary"], "approved": true },
-  "pillar.ai-security.summary": { "text": "Securing AI systems and putting agentic AI to work on security: OWASP LLM Top 10 threat modeling, attack chains against agentic systems, and MCP governance.", "sources": ["mag-3", "mag-5", "mag-6", "mag-7"], "approved": true },
+  "hero.tagline": { "text": "Building automatic security that keeps up with how fast everything else ships.", "sources": ["basics.summary","mag-2"], "approved": true },
+  "pillar.ai-security.title": { "text": "AI Security", "sources": ["basics.title","basics.summary"], "approved": true },
+  "pillar.ai-security.summary": { "text": "I secure AI systems and put agentic AI to work on security. That means threat modeling against the OWASP LLM Top 10, testing attack chains against agentic systems, and writing the MCP governance that keeps it all in bounds.", "sources": ["mag-3","mag-5","mag-6","mag-7"], "approved": false },
   "pillar.application-security.title": { "text": "Application Security", "sources": ["basics.title"], "approved": true },
-  "pillar.application-security.summary": { "text": "Security built into delivery: SAST/DAST/SCA gates in CI, STRIDE threat modeling at the design stage, and penetration testing with remediation guidance.", "sources": ["mag-2", "kpmg-1", "kpmg-4", "kpmg-5"], "approved": true },
+  "pillar.application-security.summary": { "text": "I'd rather catch a vulnerability in the pipeline than in production. I build SAST, DAST and SCA gates into CI, threat model with STRIDE at the design stage, and pen test with remediation guidance people can act on.", "sources": ["mag-2","kpmg-1","kpmg-4","kpmg-5"], "approved": false },
   "pillar.vulnerability-management.title": { "text": "Vulnerability Management", "sources": ["basics.summary"], "approved": true },
-  "pillar.vulnerability-management.summary": { "text": "The full vulnerability lifecycle, automated: scanner integration, enrichment, triage, routing, SLA tracking and validated closure.", "sources": ["mag-1", "mag-4", "kpmg-2", "kpmg-3"], "approved": true },
+  "pillar.vulnerability-management.summary": { "text": "I've owned the whole lifecycle: scanner integration, enrichment, triage, routing, SLA tracking and validated closure. I automate every step I can, so people spend their time where judgment matters.", "sources": ["mag-1","mag-4","kpmg-2","kpmg-3"], "approved": false },
   "centre.title": { "text": "Human in the loop", "sources": ["ai-agents"], "approved": true },
-  "centre.body": { "text": "Automation does the heavy lifting; a person makes the call. Agentic workflows end in a remediation PR ready for human review.", "sources": ["mag-2", "ai-agents"], "approved": true },
-
+  "centre.body": { "text": "My automation does the heavy lifting, and a person makes the call. The agentic workflows I build end in a remediation PR that waits for human review.", "sources": ["mag-2","ai-agents"], "approved": false },
   "skills.ai-security": { "text": "AI security", "sources": ["ai-security"], "approved": true },
   "skills.application-security": { "text": "Application security", "sources": ["application-security"], "approved": true },
   "skills.vulnerability-management": { "text": "Vulnerability management", "sources": ["vulnerability-management"], "approved": true },
@@ -18,7 +16,6 @@
   "skills.cloud-containers": { "text": "Cloud and containers", "sources": ["cloud-containers"], "approved": true },
   "skills.threat-intelligence": { "text": "Threat intelligence", "sources": ["threat-intelligence"], "approved": true },
   "skills.governance-risk": { "text": "Governance and risk", "sources": ["governance-risk"], "approved": true },
-
   "headline.mag-1": { "text": "End-to-end ownership of the vulnerability lifecycle", "sources": ["mag-1"], "approved": true },
   "headline.mag-2": { "text": "Shift-left gates that block vulnerable images", "sources": ["mag-2"], "approved": true },
   "headline.mag-3": { "text": "Agentic triage with Kiro, Claude Code and MCP", "sources": ["mag-3"], "approved": true },
@@ -38,5 +35,9 @@
   "headline.nokia-3": { "text": "Automated Snort signature deployment", "sources": ["nokia-3"], "approved": true },
   "headline.ericsson-1": { "text": "Python-driven root cause analysis", "sources": ["ericsson-1"], "approved": true },
   "headline.ericsson-2": { "text": "Live network troubleshooting and configuration recommendations", "sources": ["ericsson-2"], "approved": true },
-  "headline.ericsson-3": { "text": "Data analysis on 4G and 5G telecom sites", "sources": ["ericsson-3"], "approved": true }
+  "headline.ericsson-3": { "text": "Data analysis on 4G and 5G telecom sites", "sources": ["ericsson-3"], "approved": true },
+  "about.body": { "text": "I'm a security engineer who has spent the last seven years making vulnerability management actually work at scale. I've built and run programs end to end, covering scanner integrations, triage automation, remediation workflows, and the metrics that tell you whether any of it is landing, across sprawling AWS and container environments. Lately I've been pointing agentic AI at the same problem, building custom tooling and SOAR workflows that take the manual toil out of the SDLC. I work comfortably across SAST, DAST, SCA, and threat modeling, and I'm as interested in translating findings into something engineering teams will actually fix as I am in finding them.", "sources": ["basics.summary"], "approved": true },
+  "interest.soccer": { "text": "I play soccer, attempt golf, and support Liverpool. Only one of those is a personality disorder.", "sources": ["soccer"], "approved": true },
+  "interest.ai-agents": { "text": "AI moves at a sprint, security at a jog. I'd like to even that up.", "sources": ["ai-agents"], "approved": true },
+  "centre.research": { "text": "I research adversarial attacks against AI agents to show why human-in-the-loop controls belong in production AI systems.", "sources": ["ai-agents"], "approved": false }
 }

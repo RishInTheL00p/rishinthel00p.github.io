@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { cspDirectives } from './src/lib/csp.mjs';
 
 export default defineConfig({
   site: 'https://rishinthel00p.github.io',
@@ -25,17 +26,7 @@ export default defineConfig({
   security: {
     csp: {
       algorithm: 'SHA-256',
-      directives: [
-        "default-src 'none'",
-        "img-src 'self' data:",
-        "font-src 'self'",
-        "connect-src 'self'",
-        "manifest-src 'self'",
-        "base-uri 'none'",
-        "object-src 'none'",
-        "form-action 'none'",
-        'upgrade-insecure-requests',
-      ],
+      directives: cspDirectives,
       scriptDirective: { resources: ["'self'"] },
       styleDirective: { resources: ["'self'"] },
     },

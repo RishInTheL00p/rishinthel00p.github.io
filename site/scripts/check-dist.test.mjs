@@ -50,3 +50,18 @@ test('a font inlined as a data: URL in CSS fails; data: images pass', () => {
   assert.match(checkCss('@font-face{src:url(data:font/woff2;base64,AAAA) format("woff2")}').join(), /data: URL/);
   assert.deepEqual(checkCss('.x{background:url("data:image/svg+xml,%3Csvg%3E")}'), []);
 });
+
+test('an unhashed script closed with "</script >" is still caught', () => {
+  const errors = checkHtml(page('<script>alert(1)</script ><div onclick="x()"></div>')).join();
+  assert.match(errors, /not covered by a CSP hash/);
+  assert.match(errors, /inline event handler/);
+});
+
+test('an unhashed style closed with "</style >" is still caught', () => {
+  assert.match(checkHtml(page('<style>body{}</style >')).join(), /inline <style> not covered/);
+});
+
+test('an em dash, literal or as an entity, fails', () => {
+  assert.match(checkHtml(page('<p>fast — secure</p>')).join(), /em dash/);
+  assert.match(checkHtml(page('<p>fast &mdash; secure</p>')).join(), /em dash/);
+});

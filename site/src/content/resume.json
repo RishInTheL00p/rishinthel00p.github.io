@@ -1,7 +1,7 @@
 {
   "basics": {
     "name": "Rishabh Singh",
-    "title": "Security Engineer — AI & Application Security",
+    "title": "Security Engineer - AI & Application Security",
     "location": "Vancouver, BC",
     "summary": "Rishabh is an experienced **Security Engineer** with more than **7 years of expertise** in vulnerability management, DevSecOps, security automation, cloud security, and AI security. Rishabh has built automations to manage and operate vulnerability management program end-to-end owning scanner integrations, triage automation, remediation workflows, and metrics reporting across complex AWS and container-based environments. He brings **agentic AI** skills experience to security issues, having built custom tooling and **SOAR** workflows that replace manual processes with automated pipelines across the full SDLC lifecycle. Complemented by practical experience in **SAST/DAST/SCA**, threat modeling, and translating security findings into actionable outcomes for engineering and leadership stakeholders.",
     "profiles": [
@@ -14,11 +14,11 @@
       "id": "mag",
       "company": "Mark Anthony Group",
       "location": "British Columbia, Canada",
-      "title": "Security Engineer — AI & Application Security",
+      "title": "Security Engineer - AI & Application Security",
       "start": "August 2025",
       "end": "Present",
       "bullets": [
-        { "id": "mag-1", "text": "**Owned end-to-end vulnerability management lifecycle** across AWS ECS/EKS and containerized environments — from scanner integration and raw finding enrichment through triage, ownership resolution, SLA tracking, and validated remediation closure; reduced mean-time-to-remediation for critical findings by standardizing workflow automation across the engineering org." },
+        { "id": "mag-1", "text": "**Owned end-to-end vulnerability management lifecycle** across AWS ECS/EKS and containerized environments - from scanner integration and raw finding enrichment through triage, ownership resolution, SLA tracking, and validated remediation closure; reduced mean-time-to-remediation for critical findings by standardizing workflow automation across the engineering org." },
         { "id": "mag-2", "text": "Designed and developed **pipeline-integrated SAST/DAST/SCA gates using Wiz Security in Github Actions**, enforcing policy-as-code to block vulnerable container images from reaching production; ensuring findings surfaced at the right stage (CI, container build, production) with context sufficient for a developer to act without security team involvement by building agentic AI workflow that transformed raw vulnerability output into a prioritized **Jira** ticket with remediation PR ready for review." },
         { "id": "mag-3", "text": "**Developed security workflows** using **Kiro and Claude Code** to eliminate manual triage steps by automating finding classification, ticket routing, exploitability check, and follow-up escalation across the vulnerability lifecycle using MCP." },
         { "id": "mag-4", "text": "Built **vulnerability posture dashboards and automated reports** tracking open findings by severity, age, owner, and SLA status; gave engineering leadership real-time visibility into exposure without manual data aggregation." },
@@ -31,7 +31,7 @@
       "id": "kpmg",
       "company": "KPMG",
       "location": "British Columbia, Canada",
-      "title": "Specialist / Sr. Consultant — Digital Risk and Cyber Security Services",
+      "title": "Specialist / Sr. Consultant - Digital Risk and Cyber Security Services",
       "start": "May 2022",
       "end": "Aug 2025",
       "bullets": [

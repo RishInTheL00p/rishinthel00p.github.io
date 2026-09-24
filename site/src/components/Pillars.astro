@@ -1,6 +1,6 @@
 ---
 import Rich from './Rich.astro';
-import { copy, bullet, hasBullet, interest, pillarData } from '../lib/content.ts';
+import { copy, bullet, hasBullet, pillarData } from '../lib/content.ts';
 
 const pillars = pillarData.pillars.map((p) => ({
   ...p,
@@ -11,7 +11,6 @@ const pillars = pillarData.pillars.map((p) => ({
 const centreBullets = pillarData.centre.sources
   .filter(hasBullet)
   .map((id) => ({ ...bullet(id), headline: copy(`headline.${id}`) }));
-const centreInterests = pillarData.centre.sources.filter((id) => !hasBullet(id)).map(interest);
 
 // Ring geometry: three equal circles at 120° around the centre node.
 const C = { x: 210, y: 208 };
@@ -39,7 +38,7 @@ const tabs = [...pillars.map((p) => ({ id: p.id, title: p.title })), { id: 'huma
     <p class="eyebrow">The loop</p>
     <h2>Three pillars, one loop</h2>
     <p class="lede">
-      Choose a pillar to see the work behind it. Each headline opens to the original line from the resume.
+      Pick a pillar to see the work behind it. Every headline opens to the original line from my resume.
     </p>
 
     <div class="pillars" data-pillars>
@@ -109,9 +108,7 @@ const tabs = [...pillars.map((p) => ({ id: p.id, title: p.title })), { id: 'huma
               </details>
             ))}
           </div>
-          {centreInterests.map((i) => (
-            <blockquote class="interest">{i.text}</blockquote>
-          ))}
+          <blockquote class="interest">{copy('centre.research')}</blockquote>
         </div>
       </div>
     </div>
