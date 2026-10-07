@@ -11,7 +11,7 @@ import { projects, overview, overviewHref, KIND_LABEL, LEGEND_KINDS } from '../l
   <div class="container">
     <p class="eyebrow">What I've built</p>
     <h2>{copy('projects.heading')}</h2>
-    <p class="lede">{copy('projects.lede')}</p>
+    <p class="lede wide">{copy('projects.lede')}</p>
 
     <div class="projects" data-projects>
       <div class="tablist" data-tablist hidden>
@@ -160,6 +160,8 @@ import { projects, overview, overviewHref, KIND_LABEL, LEGEND_KINDS } from '../l
 </script>
 
 <style>
+  /* The section's text runs the full width of the card, so short lines don't leave gaps. */
+  .lede.wide { max-width: none; }
   .projects { margin-top: 36px; }
   .projects > * { min-width: 0; }
 
@@ -183,7 +185,7 @@ import { projects, overview, overviewHref, KIND_LABEL, LEGEND_KINDS } from '../l
   .panel[hidden] { display: none; }
   .panel-head h3 { font-family: var(--font-mono); font-size: 1.45rem; letter-spacing: 0; margin-bottom: 6px; }
   .tagline { font-size: 1.08rem; margin-bottom: 8px; }
-  .meaning { color: var(--text-muted); font-size: 0.95rem; max-width: 72ch; }
+  .meaning { color: var(--text-muted); font-size: 0.95rem; }
 
   /* ---------- Stage flow ---------- */
   .flow { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 30px; margin: 24px 0 16px; }
@@ -257,7 +259,7 @@ import { projects, overview, overviewHref, KIND_LABEL, LEGEND_KINDS } from '../l
     padding: 10px 14px; border: 1px dashed var(--text-muted); border-radius: var(--radius-sm); background: var(--bg-sunken);
     font-weight: 600;
   }
-  .overview-body { margin: 16px 0 24px; max-width: 72ch; }
+  .overview-body { margin: 16px 0 24px; }
   /* ---------- Legend ---------- */
   .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
   .legend li { display: inline-flex; align-items: center; gap: 8px; }
