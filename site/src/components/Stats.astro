@@ -1,12 +1,11 @@
 ---
 // Countable facts only: the years figure is the one the resume states, and
-// the rest are counted from resume.json, never typed in.
-import { resume, statedYears } from '../lib/content.ts';
+// the rest are counted from the content files, never typed in.
+import { resume, projectData, statedYears } from '../lib/content.ts';
 const stats = [
   { value: `${statedYears()}+`, label: 'years of expertise' },
-  { value: String(resume.experience.length), label: 'employers' },
+  { value: String(projectData.projects.length), label: 'projects' },
   { value: String(resume.certifications.length), label: 'certifications' },
-  { value: String(resume.education.length), label: 'degrees' },
 ];
 ---
 <section class="stats-section" aria-label="At a glance">
@@ -25,11 +24,11 @@ const stats = [
 <style>
   .stats-section { padding: 0; }
   .stats {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 0;
     background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   }
   .stats div { background: var(--bg-elev); padding: 18px 20px; display: flex; flex-direction: column-reverse; }
   .stats dt { color: var(--text-muted); font-size: 0.9rem; }
   .stats dd { margin: 0; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; font-family: var(--font-mono); }
-  @media (max-width: 860px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .stats { grid-template-columns: 1fr; } }
 </style>

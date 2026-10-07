@@ -1,0 +1,273 @@
+---
+// Project architectures: one tab per project, each drawn standalone as a
+// clickable flow of stages, plus a sixth tab with the future System Overview.
+// Every word comes from projects.json and owner-approved copy.json; the full
+// detail lives on each project's technical page.
+import OverviewDiagram from './OverviewDiagram.astro';
+import { copy } from '../lib/content.ts';
+import { projects, overview, overviewHref, KIND_LABEL, LEGEND_KINDS } from '../lib/projects.ts';
+---
+<section id="projects" class="section">
+  <div class="container">
+    <p class="eyebrow">What I've built</p>
+    <h2>{copy('projects.heading')}</h2>
+    <p class="lede">{copy('projects.lede')}</p>
+
+    <div class="projects" data-projects>
+      <div class="tablist" data-tablist hidden>
+        {projects.map((p) => (
+          <button type="button" class="tab" data-tab={p.id} id={`proj-tab-${p.id}`} aria-controls={`proj-panel-${p.id}`}>
+            {p.name}
+          </button>
+        ))}
+        <span class="tab-divider" aria-hidden="true"></span>
+        <button type="button" class="tab tab-future" data-tab="overview" id="proj-tab-overview" aria-controls="proj-panel-overview">
+          System Overview <span class="future-tag">Future</span>
+        </button>
+      </div>
+
+      {projects.map((p) => (
+        <article class="panel card" data-panel={p.id} id={`proj-panel-${p.id}`} data-stages>
+          <header class="panel-head">
+            <h3>{p.name}</h3>
+            <p class="tagline">{p.tagline}</p>
+            <p class="meaning"><span class="meaning-label">Why the name</span>{p.meaning}</p>
+          </header>
+
+          <ol class="flow" aria-label={`${p.name}, step by step`}>
+            {p.stages.map((s, i) => (
+              <li class={`stage k-${s.kind}`}>
+                <button type="button" class="node" data-stage={s.id} aria-controls={`note-${p.id}-${s.id}`}>
+                  <span class="kind">
+                    {s.kind === 'human' && (
+                      <svg viewBox="0 0 24 24" aria-hidden="true" class="person"><circle cx="12" cy="7.5" r="4" /><path d="M4 21a8 7 0 0 1 16 0z" /></svg>
+                    )}
+                    {KIND_LABEL[s.kind]}
+                  </span>
+                  <span class="label">{s.label}</span>
+                </button>
+                {i < p.stages.length - 1 && <span class="arrow" aria-hidden="true"></span>}
+              </li>
+            ))}
+          </ol>
+
+          <div class="notes" aria-live="polite">
+            {p.stages.map((s) => (
+              <p class={`note k-${s.kind}`} id={`note-${p.id}-${s.id}`} data-note={s.id}>
+                <strong>{s.label}:</strong> {s.plain}
+              </p>
+            ))}
+          </div>
+
+          <div class="human-callout">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="person"><circle cx="12" cy="7.5" r="4" /><path d="M4 21a8 7 0 0 1 16 0z" /></svg>
+            <p><strong>Where a person decides.</strong> {p.human}</p>
+          </div>
+
+          <div class="panel-foot">
+            <div class="built">
+              <h4>Built with</h4>
+              <ul class="chip-list">{p.stack.map((t) => <li class="chip">{t}</li>)}</ul>
+            </div>
+            <a class="more" href={p.href}>Technical view<span class="visually-hidden"> of {p.name}</span> <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      ))}
+
+      <article class="panel card panel-overview" data-panel="overview" id="proj-panel-overview">
+        <header class="panel-head">
+          <h3>{overview.title}</h3>
+          <p class="disclaimer"><span class="future-tag">Future</span>{overview.disclaimer}</p>
+        </header>
+        <p class="overview-body">{overview.body}</p>
+        <OverviewDiagram />
+        <div class="panel-foot">
+          <a class="more" href={overviewHref}>Technical view<span class="visually-hidden"> of the System Overview</span> <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+
+      <ul class="legend" aria-label="Legend">
+        {LEGEND_KINDS.map((k) => <li class={`k-${k}`}><span class="swatch"></span>{KIND_LABEL[k]}</li>)}
+        <li class="legend-future"><span class="swatch"></span>Future, not built</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-projects]');
+  if (root) {
+    const tablist = root.querySelector<HTMLElement>('[data-tablist]')!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+
+    tablist.hidden = false;
+    tablist.setAttribute('role', 'tablist');
+    tablist.setAttribute('aria-label', 'Projects');
+    tabs.forEach((t) => t.setAttribute('role', 'tab'));
+    panels.forEach((p) => {
+      p.setAttribute('role', 'tabpanel');
+      p.setAttribute('aria-labelledby', `proj-tab-${p.dataset.panel}`);
+      p.tabIndex = 0;
+    });
+
+    const select = (id: string, focus = false) => {
+      for (const t of tabs) {
+        const on = t.dataset.tab === id;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      }
+      for (const p of panels) p.hidden = p.dataset.panel !== id;
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.tab!));
+      t.addEventListener('keydown', (e) => {
+        const last = tabs.length - 1;
+        const to =
+          e.key === 'ArrowRight' || e.key === 'ArrowDown' ? (i === last ? 0 : i + 1)
+          : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? (i === 0 ? last : i - 1)
+          : e.key === 'Home' ? 0
+          : e.key === 'End' ? last
+          : -1;
+        if (to >= 0) {
+          e.preventDefault();
+          select(tabs[to].dataset.tab!, true);
+        }
+      });
+    });
+
+    // Each project's flow shows one stage note at a time; without JS all notes stay visible.
+    root.querySelectorAll<HTMLElement>('[data-stages]').forEach((panel) => {
+      const nodes = [...panel.querySelectorAll<HTMLButtonElement>('[data-stage]')];
+      const notes = [...panel.querySelectorAll<HTMLElement>('[data-note]')];
+      const show = (id: string) => {
+        for (const n of nodes) n.setAttribute('aria-pressed', String(n.dataset.stage === id));
+        for (const n of notes) n.hidden = n.dataset.note !== id;
+      };
+      nodes.forEach((n) => n.addEventListener('click', () => show(n.dataset.stage!)));
+      if (nodes[0]) show(nodes[0].dataset.stage!);
+    });
+
+    // Pointer shortcut: a project in the overview diagram opens its tab.
+    root.querySelectorAll<HTMLButtonElement>('[data-goto]').forEach((b) =>
+      b.addEventListener('click', () => select(b.dataset.goto!, true)),
+    );
+
+    select(tabs[0].dataset.tab!);
+  }
+</script>
+
+<style>
+  .projects { margin-top: 36px; }
+  .projects > * { min-width: 0; }
+
+  /* ---------- Tabs ---------- */
+  .tablist { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .tablist[hidden] { display: none; }
+  .tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elev);
+    cursor: pointer; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
+  }
+  .tab[aria-selected='true'] { color: var(--bg); background: var(--text); border-color: var(--text); }
+  .tab-divider { width: 1px; align-self: stretch; background: var(--border); margin: 2px 6px; }
+  .tab-future { border-style: dashed; }
+
+  /* ---------- Panels ---------- */
+  /* The flow switches layout on the panel's own width, so six stages never squeeze. */
+  .panel { padding: clamp(20px, 3vw, 32px); container-type: inline-size; }
+  .panel + .panel { margin-top: 20px; }
+  .js .panel + .panel { margin-top: 0; }
+  .panel[hidden] { display: none; }
+  .panel-head h3 { font-family: var(--font-mono); font-size: 1.45rem; letter-spacing: 0; margin-bottom: 6px; }
+  .tagline { font-size: 1.08rem; margin-bottom: 8px; }
+  .meaning { color: var(--text-muted); font-size: 0.95rem; max-width: 72ch; }
+
+  /* ---------- Stage flow ---------- */
+  .flow { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 30px; margin: 24px 0 16px; }
+  .stage { position: relative; min-width: 0; }
+  .node {
+    position: relative; width: 100%; height: 100%; min-height: 92px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    padding: 12px; text-align: left; cursor: pointer;
+    border: 1.5px solid var(--c); border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--c) 7%, var(--bg-elev));
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .node:hover { transform: translateY(-2px); }
+  .node[aria-pressed='true'] { background: var(--c); color: var(--bg); }
+  .k-human .node { border-width: 2px; box-shadow: 0 0 0 4px var(--human-soft); }
+  .kind {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+  .kind::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--c); flex: none; }
+  .k-human .kind::before { display: none; }
+  .node[aria-pressed='true'] .kind { color: var(--bg); }
+  .node[aria-pressed='true'] .kind::before { background: var(--bg); }
+  .node[aria-pressed='true'] .person { fill: var(--bg); }
+  .label { font-weight: 650; font-size: 0.95rem; line-height: 1.25; overflow-wrap: break-word; }
+
+  /* Dashed connector with a moving dash, so the flow reads left to right. */
+  .arrow {
+    position: absolute; top: 50%; right: -27px; width: 24px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--text-muted) 0 5px, transparent 5px 9px);
+    background-size: 18px 2px; animation: dash 1.4s linear infinite; opacity: 0.75;
+  }
+  .arrow::after {
+    content: ''; position: absolute; right: -2px; top: -4px;
+    border-left: 7px solid var(--text-muted); border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+  }
+  @keyframes dash { to { background-position: 18px 0; } }
+  @keyframes dash-down { to { background-position: 0 18px; } }
+
+  @container (max-width: 879px) {
+    .flow { grid-auto-flow: row; gap: 22px; }
+    .node { min-height: 0; flex-direction: row-reverse; justify-content: space-between; align-items: center; }
+    .arrow {
+      top: auto; right: auto; left: 22px; bottom: -20px; width: 2px; height: 18px;
+      background: repeating-linear-gradient(180deg, var(--text-muted) 0 5px, transparent 5px 9px);
+      background-size: 2px 18px; animation-name: dash-down;
+    }
+    .arrow::after {
+      right: auto; top: auto; left: -4px; bottom: -3px;
+      border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--text-muted); border-bottom: 0;
+    }
+  }
+
+  .notes { display: grid; gap: 10px; margin: 0 0 20px; padding: 14px 16px; background: var(--bg-sunken); border-radius: var(--radius-sm); }
+  .note { margin: 0; padding-left: 12px; border-left: 3px solid var(--c); }
+  .note[hidden] { display: none; }
+
+
+  .panel-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; }
+  .more { font-size: 0.92rem; font-weight: 600; color: var(--appsec); white-space: nowrap; }
+  .built h4 {
+    font-size: 0.78rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); margin-bottom: 10px;
+  }
+
+  /* ---------- System Overview (future) ---------- */
+  .panel-overview { border-style: dashed; border-width: 2px; }
+  .disclaimer {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 0;
+    padding: 10px 14px; border: 1px dashed var(--text-muted); border-radius: var(--radius-sm); background: var(--bg-sunken);
+    font-weight: 600;
+  }
+  .overview-body { margin: 16px 0 24px; max-width: 72ch; }
+  /* ---------- Legend ---------- */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
+  .legend li { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch { width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }
+  .legend-future .swatch { --c: var(--text-muted); border-style: dashed; background: none; }
+
+  /* Tabs wrap below this width, where a divider would dangle at a line end. */
+  @media (max-width: 900px) { .tab-divider { display: none; } }
+  @media print {
+    .panel[hidden], .note[hidden] { display: block; }
+    .arrow { display: none; }
+  }
+</style>

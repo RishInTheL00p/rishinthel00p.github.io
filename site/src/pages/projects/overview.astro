@@ -1,0 +1,54 @@
+---
+// The System Overview: how the five projects could connect into one program.
+// This is the only page that relates projects to each other, and it says up
+// front that none of these connections are built.
+import Base from '../../layouts/Base.astro';
+import OverviewDiagram from '../../components/OverviewDiagram.astro';
+import { copy } from '../../lib/content.ts';
+import { projects, overview } from '../../lib/projects.ts';
+---
+<Base title={`System Overview | ${copy('site.name')}`} description={overview.disclaimer}>
+  <section class="section">
+    <div class="container prose">
+      <a class="back" href="/#projects"><span aria-hidden="true">←</span> All projects</a>
+      <p class="eyebrow">Future vision</p>
+      <h1>{overview.title}</h1>
+      <p class="disclaimer"><span class="future-tag">Future</span>{overview.disclaimer}</p>
+      <p class="body">{overview.body}</p>
+
+      <div class="diagram card">
+        <OverviewDiagram links />
+      </div>
+
+      <h2>Each project on its own</h2>
+      <ul class="list">
+        {projects.map((p) => (
+          <li class="card">
+            <h3><a href={p.href}>{p.name}</a></h3>
+            <p>{p.tagline}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prose { max-width: 820px; }
+  .prose h1 { font-size: clamp(2rem, 4.5vw, 2.8rem); }
+  .prose h2 { font-size: 1.45rem; margin-top: 2em; }
+  .back { display: inline-flex; gap: 6px; margin-bottom: 28px; font-size: 0.92rem; font-weight: 600; color: var(--appsec); }
+  .disclaimer {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 8px 0 20px;
+    padding: 12px 16px; border: 1px dashed var(--text-muted); border-radius: var(--radius-sm); background: var(--bg-sunken);
+    font-weight: 600;
+  }
+  .body { max-width: 72ch; }
+  .diagram { padding: clamp(18px, 3vw, 28px); border: 2px dashed var(--border); margin-top: 24px; }
+
+  .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .list li { padding: 18px 20px; }
+  .list h3 { font-family: var(--font-mono); font-size: 1.05rem; letter-spacing: 0; margin-bottom: 6px; }
+  .list h3 a { color: var(--appsec); }
+  .list p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+</style>

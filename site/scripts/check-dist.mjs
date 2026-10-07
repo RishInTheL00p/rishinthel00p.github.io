@@ -4,12 +4,18 @@
 //   - has inline style="" or on*="" event-handler attributes
 //   - links with javascript: or plain http:, or opens a new tab without
 //     rel="noopener noreferrer"
+//   - names an employer or school from resume.json (the site shows no work
+//     history), or links into the owner's private project repos
 //
 // Usage: node scripts/check-dist.mjs [distDir]
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { privateNamePatterns, findPrivateNames } from './lib/disclosure.mjs';
+
+// The owner's GitHub profile may be linked; nothing beneath it (the project repos are private).
+const PRIVATE_REPO_LINK = /github\.com\/rsg14196\/[^\s"'<>]+/i;
 
 const REQUIRED_DIRECTIVES = {
   'default-src': "'none'",
@@ -32,8 +38,8 @@ export function parseCsp(policy) {
   return map;
 }
 
-/** Returns a list of problems for one HTML document. */
-export function checkHtml(html) {
+/** Returns a list of problems for one HTML document. `privateNames` comes from privateNamePatterns(). */
+export function checkHtml(html, { privateNames = [] } = {}) {
   const errors = [];
   const metas = [...html.matchAll(/<meta\s+http-equiv="content-security-policy"\s+content="([^"]*)"/gi)];
   if (metas.length !== 1) {
@@ -72,6 +78,10 @@ export function checkHtml(html) {
 
   // House style: no em dashes anywhere on the site, literal or as entities.
   if (/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html)) errors.push('page contains an em dash');
+
+  for (const name of findPrivateNames(html, privateNames)) errors.push(`page names "${name}" (no employers or schools on the site)`);
+  const repoLink = PRIVATE_REPO_LINK.exec(html);
+  if (repoLink) errors.push(`page links into a private repo: ${repoLink[0]}`);
 
   // Attributes, checked on tag markup only (not text or script bodies).
   let withoutScripts = html;
@@ -122,9 +132,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.error(`check-dist: no HTML files in ${dist}. Build first.`);
     process.exit(1);
   }
+  const resume = JSON.parse(readFileSync(new URL('../src/content/resume.json', import.meta.url), 'utf8'));
+  const privateNames = privateNamePatterns(resume);
   let problems = 0;
   const checks = [
-    ...files.map((f) => [f, checkHtml]),
+    ...files.map((f) => [f, (html) => checkHtml(html, { privateNames })]),
     ...filesWithExt(dist, '.css').map((f) => [f, checkCss]),
   ];
   for (const [f, check] of checks) {

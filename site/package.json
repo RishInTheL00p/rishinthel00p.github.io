@@ -12,6 +12,8 @@
     "typecheck": "astro check",
     "verify": "node scripts/verify-content.mjs",
     "verify:draft": "node scripts/verify-content.mjs --allow-unapproved",
+    "verify:resume": "node scripts/verify-content.mjs --require-resume",
+    "verify:sources": "node scripts/verify-sources.mjs",
     "check-dist": "node scripts/check-dist.mjs",
     "test": "node --test \"scripts/**/*.test.mjs\"",
     "ci": "npm test && npm run verify && npm run typecheck && npm run build && npm run check-dist",

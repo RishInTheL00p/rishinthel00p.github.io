@@ -1,0 +1,130 @@
+---
+// Technical view of one project, read on its own: every stage in full detail,
+// where a person decides, and the stack. It links back to the homepage only,
+// never to another project, so each project stands alone here too.
+import Base from '../../layouts/Base.astro';
+import { copy } from '../../lib/content.ts';
+import { projects, KIND_LABEL, type ProjectView } from '../../lib/projects.ts';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+interface Props {
+  project: ProjectView;
+}
+const { project: p } = Astro.props;
+---
+<Base title={`${p.name}: technical view | ${copy('site.name')}`} description={p.tagline}>
+  <section class="section">
+    <div class="container prose">
+      <a class="back" href="/#projects"><span aria-hidden="true">←</span> All projects</a>
+      <p class="eyebrow">Project, technical view</p>
+      <h1>{p.name}</h1>
+      <p class="lede">{p.tagline}</p>
+      <p class="meaning"><span class="meaning-label">Why the name</span>{p.meaning}</p>
+      <p>{p.summary}</p>
+
+      <dl class="facts card">
+        <div>
+          <dt>Orchestration</dt>
+          <dd>{p.orchestrator}</dd>
+        </div>
+        <div>
+          <dt>Built with</dt>
+          <dd><ul class="chip-list">{p.stack.map((t) => <li class="chip">{t}</li>)}</ul></dd>
+        </div>
+      </dl>
+
+      <div class="human-callout">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="person"><circle cx="12" cy="7.5" r="4" /><path d="M4 21a8 7 0 0 1 16 0z" /></svg>
+        <p><strong>Where a person decides.</strong> {p.human}</p>
+      </div>
+
+      <h2>The flow</h2>
+      <ol class="strip">
+        {p.stages.map((s, i) => (
+          <li class={`k-${s.kind}`}>
+            <a href={`#stage-${s.id}`}><span class="n" aria-hidden="true">{i + 1}</span>{s.label}</a>
+          </li>
+        ))}
+      </ol>
+
+      <h2>Step by step</h2>
+      <ol class="steps">
+        {p.stages.map((s, i) => (
+          <li id={`stage-${s.id}`} class={`step card k-${s.kind}`}>
+            <div class="step-head">
+              <span class="n" aria-hidden="true">{i + 1}</span>
+              <h3>{s.label}</h3>
+              <span class="kind">
+                {s.kind === 'human' && (
+                  <svg viewBox="0 0 24 24" aria-hidden="true" class="person"><circle cx="12" cy="7.5" r="4" /><path d="M4 21a8 7 0 0 1 16 0z" /></svg>
+                )}
+                {KIND_LABEL[s.kind]}
+              </span>
+            </div>
+            <p class="plain">{s.plain}</p>
+            <p class="detail">{s.detail}</p>
+          </li>
+        ))}
+      </ol>
+
+      <p class="back-foot"><a class="back" href="/#projects"><span aria-hidden="true">←</span> All projects</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prose { max-width: 820px; }
+  .prose h1 { font-family: var(--font-mono); font-size: clamp(2.2rem, 5vw, 3.2rem); letter-spacing: 0; margin-bottom: 0.3em; }
+  .prose h2 { font-size: 1.45rem; margin-top: 2em; }
+  .back { display: inline-flex; gap: 6px; margin-bottom: 28px; font-size: 0.92rem; font-weight: 600; color: var(--appsec); }
+  .back-foot { margin-top: 40px; }
+  .lede { font-size: 1.15rem; color: var(--text); }
+  .meaning { color: var(--text-muted); }
+
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 0; margin: 24px 0 20px; padding: 6px 20px; }
+  .facts div { display: contents; }
+  .facts dt, .facts dd { padding: 12px 0; border-top: 1px solid var(--border); }
+  .facts div:first-child dt, .facts div:first-child dd { border-top: 0; }
+  .facts dt {
+    font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); padding-right: 24px; padding-top: 15px;
+  }
+  .facts dd { margin: 0; font-weight: 600; }
+
+  .strip { display: flex; flex-wrap: wrap; gap: 8px; }
+  .strip a {
+    display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px 7px 8px; border-radius: 999px;
+    border: 1.5px solid var(--c); background: color-mix(in srgb, var(--c) 7%, var(--bg-elev));
+    font-size: 0.9rem; font-weight: 600; text-decoration: none;
+  }
+  .strip a:hover { background: color-mix(in srgb, var(--c) 16%, var(--bg-elev)); }
+
+  .n {
+    display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; flex: none;
+    font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; background: var(--c); color: var(--bg);
+  }
+
+  .steps { display: grid; gap: 14px; }
+  .step { padding: 18px 22px; border-left: 4px solid var(--c); scroll-margin-top: 80px; }
+  .k-human.step { box-shadow: 0 0 0 4px var(--human-soft), var(--shadow); }
+  .step-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 8px; }
+  .step-head h3 { margin: 0; font-size: 1.15rem; }
+  .kind {
+    display: inline-flex; align-items: center; gap: 6px; margin-left: auto;
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+  .kind::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .k-human .kind::before { display: none; }
+  .plain { margin-bottom: 8px; font-weight: 500; }
+  .detail { margin: 0; color: var(--text-muted); font-size: 0.97rem; }
+
+  @media (max-width: 560px) {
+    .facts { grid-template-columns: 1fr; }
+    .facts dt { padding-bottom: 0; }
+    .facts dd { border-top: 0; padding-top: 6px; }
+    .kind { margin-left: 0; }
+  }
+</style>

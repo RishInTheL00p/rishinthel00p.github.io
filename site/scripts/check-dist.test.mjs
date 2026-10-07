@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { checkHtml, checkCss } from './check-dist.mjs';
+import { privateNamePatterns } from './lib/disclosure.mjs';
 
 const hash = (s) => `'sha256-${createHash('sha256').update(s).digest('base64')}'`;
 const SCRIPT = 'console.log(1)';
@@ -69,4 +70,22 @@ test('an em dash, literal or as an entity, fails', () => {
 test('an in-page link to a missing id fails; one to an existing id passes', () => {
   assert.match(checkHtml(page('<a href="#nowhere">x</a>')).join(), /broken in-page link: #nowhere/);
   assert.deepEqual(checkHtml(page('<a href="#here">x</a><section id="here"></section>')), []);
+});
+
+test('an employer or school name on a page fails; the GitHub profile link passes', () => {
+  const resume = {
+    experience: [{ company: 'Acme Widgets Group' }, { company: 'KPMG' }],
+    education: [{ school: 'University of Somewhere, BC' }, { school: 'Tech Institute (affiliated with ABCU)' }],
+  };
+  const privateNames = privateNamePatterns(resume);
+  const errors = checkHtml(page('<h3>Acme Widgets</h3><p>University of Somewhere</p><p>ABCU</p>'), { privateNames }).join();
+  assert.match(errors, /"Acme Widgets"/);
+  assert.match(errors, /"University of Somewhere"/);
+  assert.match(errors, /"ABCU"/);
+  // Acronyms match case-sensitively, so ordinary words don't trip them.
+  assert.deepEqual(checkHtml(page('<p>kpmg-style abcu</p><a href="https://github.com/rsg14196">GitHub</a>'), { privateNames }), []);
+});
+
+test('a link into the private project repos fails', () => {
+  assert.match(checkHtml(page('<a href="https://github.com/rsg14196/Oracle">x</a>')).join(), /private repo: github\.com\/rsg14196\/Oracle/);
 });

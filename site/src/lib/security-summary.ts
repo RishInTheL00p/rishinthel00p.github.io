@@ -35,7 +35,7 @@ const items: (SecurityItem & { contactOnly?: boolean })[] = [
   {
     id: 'accuracy',
     label: 'Accuracy',
-    plain: 'My work history, skills and credentials are checked against my resume on every build.',
+    plain: 'My skills, credentials and project write-ups are checked against their sources before anything is published.',
   },
 ];
 
