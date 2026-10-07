@@ -148,6 +148,31 @@ button { font: inherit; color: inherit; }
 .bullet p { color: var(--text-muted); margin: 0 0 14px; font-size: 0.97rem; }
 .bullet p strong { color: var(--text); }
 
+/* Project stage kinds: one colour per kind of step, shared by the homepage
+   section and the technical pages. */
+.k-input, .k-output { --c: var(--text-muted); }
+.k-deterministic { --c: var(--appsec); }
+.k-agent { --c: var(--ai); }
+.k-gate { --c: var(--vm); }
+.k-human { --c: var(--human); }
+
+/* Shared by the projects section and its pages. */
+.person { width: 14px; height: 14px; fill: var(--human); flex: none; }
+.future-tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600; line-height: 1.4;
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 1px 7px; border-radius: 999px; border: 1px dashed currentColor;
+}
+.meaning-label {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  margin-right: 8px;
+}
+.human-callout {
+  display: flex; gap: 12px; align-items: flex-start; margin-bottom: 20px; padding: 14px 16px;
+  border: 1px solid var(--human); border-radius: var(--radius-sm); background: var(--human-soft);
+}
+.human-callout .person { width: 22px; height: 22px; margin-top: 2px; }
+.human-callout p { margin: 0; }
+
 /* Reveal on scroll, only once the reveal script has confirmed it is running. */
 .reveal-ready .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .reveal-ready .reveal.in { opacity: 1; transform: none; }
@@ -175,5 +200,4 @@ button { font: inherit; color: inherit; }
 .container > *,
 [class*='-grid'] > *,
 .pillars > *,
-.about > *,
-.entry > * { min-width: 0; }
+.about > * { min-width: 0; }

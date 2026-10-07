@@ -1,0 +1,947 @@
+{
+  "projects": [
+    {
+      "id": "conflux",
+      "name": "CONFLUX",
+      "orchestrator": "n8n",
+      "stack": [
+        "n8n",
+        "Python",
+        "FastAPI",
+        "Postgres",
+        "MinIO",
+        "Grafana"
+      ],
+      "stages": [
+        {
+          "id": "scan",
+          "kind": "input",
+          "sources": [
+            "conflux.scanners",
+            "conflux.breadth"
+          ]
+        },
+        {
+          "id": "ingest",
+          "kind": "deterministic",
+          "sources": [
+            "conflux.scanners",
+            "conflux.stance",
+            "conflux.lineage",
+            "conflux.fastapi"
+          ]
+        },
+        {
+          "id": "dedupe",
+          "kind": "deterministic",
+          "sources": [
+            "conflux.fingerprint",
+            "conflux.correlation",
+            "conflux.dedup-rate"
+          ]
+        },
+        {
+          "id": "enrich",
+          "kind": "deterministic",
+          "sources": [
+            "conflux.intel",
+            "conflux.compliance",
+            "conflux.severity"
+          ]
+        },
+        {
+          "id": "route",
+          "kind": "human",
+          "sources": [
+            "conflux.ownership",
+            "conflux.emit"
+          ]
+        },
+        {
+          "id": "report",
+          "kind": "output",
+          "sources": [
+            "conflux.grafana",
+            "conflux.reader-role",
+            "conflux.export"
+          ]
+        }
+      ],
+      "human": {
+        "stage": "route",
+        "sources": [
+          "conflux.emit",
+          "conflux.ownership"
+        ]
+      }
+    },
+    {
+      "id": "oracle",
+      "name": "ORACLE",
+      "orchestrator": "Langflow",
+      "stack": [
+        "Langflow",
+        "Python",
+        "FastAPI",
+        "Claude",
+        "BM25"
+      ],
+      "stages": [
+        {
+          "id": "finding",
+          "kind": "input",
+          "sources": [
+            "oracle.service",
+            "oracle.langflow",
+            "oracle.untrusted"
+          ]
+        },
+        {
+          "id": "ground",
+          "kind": "deterministic",
+          "sources": [
+            "oracle.grounding",
+            "oracle.presence",
+            "oracle.reachability",
+            "oracle.exposure"
+          ]
+        },
+        {
+          "id": "decide",
+          "kind": "deterministic",
+          "sources": [
+            "oracle.adjudicator",
+            "oracle.grounding",
+            "oracle.bench",
+            "oracle.accuracy"
+          ]
+        },
+        {
+          "id": "explain",
+          "kind": "agent",
+          "sources": [
+            "oracle.explainer",
+            "oracle.rag"
+          ]
+        },
+        {
+          "id": "guard",
+          "kind": "gate",
+          "sources": [
+            "oracle.guard",
+            "oracle.citations",
+            "oracle.injection"
+          ]
+        },
+        {
+          "id": "review",
+          "kind": "human",
+          "sources": [
+            "oracle.auto-commit",
+            "oracle.human-review"
+          ]
+        }
+      ],
+      "human": {
+        "stage": "review",
+        "sources": [
+          "oracle.human-review"
+        ]
+      }
+    },
+    {
+      "id": "cadence",
+      "name": "CADENCE",
+      "orchestrator": "Tracecat",
+      "stack": [
+        "Tracecat",
+        "Python",
+        "Postgres",
+        "Grafana",
+        "Slack"
+      ],
+      "stages": [
+        {
+          "id": "intake",
+          "kind": "input",
+          "sources": [
+            "cadence.intake",
+            "cadence.schema",
+            "cadence.errors"
+          ]
+        },
+        {
+          "id": "route",
+          "kind": "gate",
+          "sources": [
+            "cadence.routing",
+            "cadence.threshold"
+          ]
+        },
+        {
+          "id": "track",
+          "kind": "deterministic",
+          "sources": [
+            "cadence.state-machine",
+            "cadence.history",
+            "cadence.states",
+            "cadence.sla",
+            "cadence.watchdog"
+          ]
+        },
+        {
+          "id": "decide",
+          "kind": "human",
+          "sources": [
+            "cadence.claim",
+            "cadence.risk"
+          ]
+        },
+        {
+          "id": "close",
+          "kind": "gate",
+          "sources": [
+            "cadence.closure",
+            "cadence.reopen"
+          ]
+        },
+        {
+          "id": "report",
+          "kind": "output",
+          "sources": [
+            "cadence.orchestration",
+            "cadence.workflows",
+            "cadence.team-views"
+          ]
+        }
+      ],
+      "human": {
+        "stage": "decide",
+        "sources": [
+          "cadence.routing",
+          "cadence.claim",
+          "cadence.risk"
+        ]
+      }
+    },
+    {
+      "id": "forge",
+      "name": "FORGE",
+      "orchestrator": "Python",
+      "stack": [
+        "Python",
+        "Docker",
+        "Claude",
+        "Verdaccio",
+        "devpi"
+      ],
+      "stages": [
+        {
+          "id": "feasibility",
+          "kind": "gate",
+          "sources": [
+            "forge.feasibility"
+          ]
+        },
+        {
+          "id": "reproduce",
+          "kind": "agent",
+          "sources": [
+            "forge.repro-agent",
+            "forge.gate-a",
+            "forge.agents"
+          ]
+        },
+        {
+          "id": "patch",
+          "kind": "agent",
+          "sources": [
+            "forge.strategist",
+            "forge.patcher"
+          ]
+        },
+        {
+          "id": "verify",
+          "kind": "gate",
+          "sources": [
+            "forge.gates-bc",
+            "forge.gates-de",
+            "forge.classes",
+            "forge.results",
+            "forge.rates",
+            "forge.scope"
+          ]
+        },
+        {
+          "id": "deliver",
+          "kind": "human",
+          "sources": [
+            "forge.pr",
+            "forge.abstain"
+          ]
+        }
+      ],
+      "human": {
+        "stage": "deliver",
+        "sources": [
+          "forge.pr",
+          "forge.abstain"
+        ]
+      }
+    },
+    {
+      "id": "proving-ground",
+      "name": "PROVING GROUND",
+      "orchestrator": "Python",
+      "stack": [
+        "Python",
+        "Docker",
+        "Claude"
+      ],
+      "stages": [
+        {
+          "id": "scope",
+          "kind": "human",
+          "sources": [
+            "proving-ground.allowlist",
+            "proving-ground.preflight"
+          ]
+        },
+        {
+          "id": "plan",
+          "kind": "agent",
+          "sources": [
+            "proving-ground.blackboard",
+            "proving-ground.planner",
+            "proving-ground.chain-a"
+          ]
+        },
+        {
+          "id": "cage",
+          "kind": "gate",
+          "sources": [
+            "proving-ground.linter",
+            "proving-ground.provenance",
+            "proving-ground.safety-summary"
+          ]
+        },
+        {
+          "id": "test",
+          "kind": "deterministic",
+          "sources": [
+            "proving-ground.surface-a",
+            "proving-ground.chain-a",
+            "proving-ground.surface-b",
+            "proving-ground.owasp-llm",
+            "proving-ground.canary",
+            "proving-ground.no-funds"
+          ]
+        },
+        {
+          "id": "report",
+          "kind": "output",
+          "sources": [
+            "proving-ground.disclosure",
+            "proving-ground.safety-summary",
+            "proving-ground.surface-a"
+          ]
+        }
+      ],
+      "human": {
+        "stage": "scope",
+        "sources": [
+          "proving-ground.allowlist",
+          "proving-ground.linter"
+        ]
+      }
+    }
+  ],
+  "overview": {
+    "status": "future",
+    "flow": [
+      "conflux",
+      "oracle",
+      "cadence",
+      "forge"
+    ],
+    "feedback": "proving-ground"
+  },
+  "sources": {
+    "conflux.stance": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "ingestion, normalization, dedup, and routing are deterministic problems with a correct answer, so there is deliberately **no LLM in this pipeline**. n8n provides connectors, retries, scheduling, and a visual audit trail"
+    },
+    "conflux.scanners": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "This posts the checked-in samples of all five scanners (Tenable `.nessus`, Semgrep, OSV-Scanner, Wiz and Invicti JSON) to the sidecar. The sidecar stores each raw payload in MinIO, normalizes it to canonical Findings, deduplicates, enriches and upserts them."
+    },
+    "conflux.breadth": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "**OSV-Scanner** (SCA, `ci`), **Wiz** (cloud/container, `runtime`) and **Invicti** (DAST, `runtime`). With Tenable (`network`) and Semgrep (`ci`), every pipeline stage the schema names has a real adapter."
+    },
+    "conflux.dedup-rate": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "Expected on an empty store: **20 raw → 16 unique findings, a 20% dedup-rate**"
+    },
+    "conflux.fingerprint": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "**`fingerprint` is scanner-independent** — `sha256(vuln.id | artifact.identity | purl)` — so dedup works across tools."
+    },
+    "conflux.correlation": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "The store now applies the same conservative fuzzy match as in-batch dedup (same vuln id + same artifact)"
+    },
+    "conflux.lineage": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "**`raw_payload_ref` is never deleted** — every derived field stays re-derivable → audit-ready lineage for ISO 27001 / PCI DSS."
+    },
+    "conflux.intel": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "**Threat intel** ([`conflux/enrich/`](conflux/enrich/)) — EPSS, CISA KEV, NVD (CVSS/CWE) and GHSA (fixed version), from a bundled, version-controlled snapshot so enrichment is reproducible and runs offline."
+    },
+    "conflux.compliance": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "PCI-DSS / CIS / ISO 27001 / NIST CSF / OWASP ASVS control references from the CWE and KEV status."
+    },
+    "conflux.severity": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "It only ever *raises*, never lowers."
+    },
+    "conflux.ownership": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "repo → image → host → CIDR → default, from [`ownership.yaml`](ownership.yaml), with a confidence and a recorded resolution path. Nothing is ever dropped."
+    },
+    "conflux.emit": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "file a Jira issue and/or a ServiceNow incident, routed to the owning team. **Idempotent**: a per-system ledger keyed by the scanner-independent fingerprint means re-ingesting a scan never opens a duplicate ticket. Dry-run by default (no credentials needed)."
+    },
+    "conflux.grafana": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "Grafana is provisioned from code"
+    },
+    "conflux.reader-role": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "read through a `SELECT`-only Postgres role."
+    },
+    "conflux.export": {
+      "repo": "conflux",
+      "path": "README.md",
+      "commit": "2962728",
+      "quote": "`findings`, `controls` and `summary` datasets as CSV and Parquet, grouped by PCI DSS / CIS / NIST CSF / ISO 27001 / OWASP ASVS ([COMPLIANCE-MAP.md](docs/COMPLIANCE-MAP.md)), written nightly by an n8n schedule or on demand."
+    },
+    "conflux.python": {
+      "repo": "conflux",
+      "path": "pyproject.toml",
+      "commit": "2962728",
+      "quote": "requires-python = \">=3.11\""
+    },
+    "conflux.fastapi": {
+      "repo": "conflux",
+      "path": "pyproject.toml",
+      "commit": "2962728",
+      "quote": "# The FastAPI sidecar that n8n Code nodes call for heavier transforms."
+    },
+    "oracle.headline": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "ORACLE decides which findings are actually exploitable, why, and what a developer should do — and it is built so you can *prove* the AI is trustworthy. Orchestration tool: **Langflow**."
+    },
+    "oracle.grounding": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "ORACLE may only render an exploitability verdict *after* calling deterministic tools that return facts about the specific artifact, and it must abstain (`needs_info`) whenever grounding is `unknown`. There is deliberately **no LLM in these tools**; they are the part that keeps the triage honest."
+    },
+    "oracle.reachability": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "a stdlib-`ast` Python call graph, BFS from entrypoints to the vulnerable symbol."
+    },
+    "oracle.presence": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "canonical version-range evaluation (`packaging`) + dev-dependency detection: catches version-mismatch and dev-only false positives."
+    },
+    "oracle.exposure": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "turns deployment facts into an exposure verdict + a documented blast-radius score, so risk is judged on real exposure, not a CVSS number."
+    },
+    "oracle.adjudicator": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "derives the verdict + confidence from those facts — presence gates everything, then reachability, then exposure."
+    },
+    "oracle.explainer": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "writes the developer-facing explanation and rebuttal packet — **Claude** when `ANTHROPIC_API_KEY` is set, otherwise a deterministic template (so the flow runs with or without a key)."
+    },
+    "oracle.guard": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "enforces the invariants: **no verdict without grounding**, verdict/confidence are the adjudicator's (not the model's), and anti-fabrication (a claimed call path must be the real one; no unrelated CVE may be cited)."
+    },
+    "oracle.rag": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "a knowledge store of advisories, CWE remediation guidance, KEV notes and past-verdict memory, searched by a **deterministic, offline BM25 retriever** (no embedding model, no network, no API key — reproducible like the grounding tools). The retriever supplies *citable* context; it never changes the verdict."
+    },
+    "oracle.citations": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "every citation ORACLE emits must resolve to a document that was actually retrieved."
+    },
+    "oracle.auto-commit": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "a grounded, high-confidence verdict may `auto_commit` (exploitable) or `auto_dismiss` (false positive)"
+    },
+    "oracle.human-review": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "anything ungrounded, `needs_info`, or below the confidence threshold is routed to `human_review`. ORACLE never acts on a decision it is unsure of."
+    },
+    "oracle.service": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "The service is standalone REST (`POST /v1/triage`)"
+    },
+    "oracle.langflow": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "Set `ANTHROPIC_API_KEY` in the environment to use the Claude explainer. It's also a Langflow component"
+    },
+    "oracle.untrusted": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "The adjudicator never reads it; the Claude explainer sees it only as delimited data."
+    },
+    "oracle.bench": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "grades ORACLE against **80 labeled findings**: 45 realistic cases on real CVEs, and 35 adversarial ones built to bait it into hallucinating."
+    },
+    "oracle.accuracy": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "| Accuracy (core) | 0.62 | 0.00 (abstains) | 0.20 | 0.78 | **0.89** |"
+    },
+    "oracle.injection": {
+      "repo": "oracle",
+      "path": "README.md",
+      "commit": "2f7db0f",
+      "quote": "scanner text never moves a verdict (injection compliance 0.00)."
+    },
+    "oracle.fastapi": {
+      "repo": "oracle",
+      "path": "pyproject.toml",
+      "commit": "2f7db0f",
+      "quote": "service = [\"fastapi>=0.110\", \"uvicorn[standard]>=0.29\"]"
+    },
+    "cadence.headline": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "carries it through triage routing, SLA, ownership escalation, risk acceptance and closure — with durable state and human-gated exceptions. Orchestration tool: **Tracecat**."
+    },
+    "cadence.state-machine": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "the single authority on how a case may move, as a data-driven transition table plus data-level guards"
+    },
+    "cadence.history": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "`Case`, `Lifecycle`, `RiskAcceptance`, `FindingRef`, with a full transition history for audit."
+    },
+    "cadence.states": {
+      "repo": "cadence",
+      "path": "cadence/models.py",
+      "commit": "8f4113c",
+      "quote": "NEW = \"new\" TRIAGED = \"triaged\" ASSIGNED = \"assigned\" IN_PROGRESS = \"in_progress\" FIX_PROPOSED = \"fix_proposed\" FIX_VALIDATED = \"fix_validated\" CLOSED = \"closed\""
+    },
+    "cadence.intake": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "Webhook requires a bearer token from `CADENCE_WEBHOOK_TOKEN`; if the token is unset or wrong the request is rejected (fail closed)."
+    },
+    "cadence.schema": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "The incoming finding is validated against a strict Pydantic schema (extra fields rejected)."
+    },
+    "cadence.errors": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "Errors return generic messages; no stack traces or upstream errors leak to clients."
+    },
+    "cadence.routing": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "a deterministic gate: only low/medium, high-confidence, owner-resolved findings **auto-file**; a grounded false positive is **dismissed** (unless KEV-listed, which needs a human); everything else opens a **human case**."
+    },
+    "cadence.threshold": {
+      "repo": "cadence",
+      "path": "cadence/routing.py",
+      "commit": "8f4113c",
+      "quote": "AUTO_FILE_CONFIDENCE = 0.85"
+    },
+    "cadence.sla": {
+      "repo": "cadence",
+      "path": "cadence/sla.py",
+      "commit": "8f4113c",
+      "quote": "\"critical\": 7, \"high\": 14, \"medium\": 30, \"low\": 90,"
+    },
+    "cadence.watchdog": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "owner nudge at T-3d, channel ping at T-1d, escalation at T+0 (marks the breach). Fired through a pluggable notifier — **Slack** when `SLACK_WEBHOOK_URL` is set, otherwise logged."
+    },
+    "cadence.risk": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "acceptance needs a **named approver**, a compensating control and a **hard expiry** (the state-machine guard refuses it otherwise). The **expiry sweep** auto-reopens (`risk_accepted → triaged`) any acceptance whose clock has run out and marks it `expired`: time-boxed risk cannot silently persist."
+    },
+    "cadence.claim": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "A member claims it (Slack-signed click, or the bearer `/v1/claims` API) and the case moves `triaged → assigned` for that team. Only a team's own members can claim for it."
+    },
+    "cadence.reopen": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "when a re-scan sights a finding CADENCE had closed out, the case is revived (`closed → in_progress`, `false_positive → triaged`) and `reopened_count` increments, so a finding that keeps coming back is visible."
+    },
+    "cadence.closure": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "a case moves to `closed` **only** when a fresh scan confirms the finding is gone; if it is still present, closure is refused and the case bounces back to `in_progress` with the SLA clock still running. No \"closed on trust\"."
+    },
+    "cadence.no-llm": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "Phase 2 closes the lifecycle loop — deterministically, no LLM. Every step is a guarded transition on the same state machine."
+    },
+    "cadence.orchestration": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "Tracecat workflows ([`tracecat/workflows/`](tracecat/workflows/)) call the intake and watchdog endpoints; Grafana SLA panels"
+    },
+    "cadence.workflows": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "finding-intake, sla-watchdog, lifecycle-sweeps, ownership-unknown"
+    },
+    "cadence.team-views": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "`GET /v1/sla/summary?team=` and the Grafana **Team** variable give each team its own view."
+    },
+    "cadence.postgres": {
+      "repo": "cadence",
+      "path": "README.md",
+      "commit": "8f4113c",
+      "quote": "Postgres is the supported backend (and the source of truth)"
+    },
+    "cadence.python": {
+      "repo": "cadence",
+      "path": "pyproject.toml",
+      "commit": "8f4113c",
+      "quote": "requires-python = \">=3.11\""
+    },
+    "forge.headline": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "**A Cyber Reasoning System harness:** a validated finding is reproduced in a sandbox, patched, *proven* fixed, and returned as a pull request — or refused with an evidence report."
+    },
+    "forge.sandbox": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "Everything FORGE does runs inside an **ephemeral, hardened, egress-denied** container."
+    },
+    "forge.egress": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "The sandbox attaches only to an `internal` Docker network with no route to the internet. It can install dependencies through pinned proxies (Verdaccio for npm, devpi for PyPI) that are dual-homed to an egress network, but it cannot reach `1.1.1.1` or the cloud metadata endpoint (`169.254.169.254`)."
+    },
+    "forge.privilege": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "Read-only root, all Linux capabilities dropped, `no-new-privileges`, non-root uid, tmpfs-only writable paths."
+    },
+    "forge.bounded": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "Memory/pid/CPU caps, wall-clock timeout, fresh container per attempt."
+    },
+    "forge.feasibility": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "GO/NO-GO: is there a reproduction, a suite, and a fix? A NO-GO is a valid outcome."
+    },
+    "forge.gate-a": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "the reproduction must **fail** on the vulnerable code (in the sandbox). That failure is the proof the vulnerability is real *in this app*."
+    },
+    "forge.gates-bc": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "**Gates B, C** — the reproduction **passes** after the patch, and the existing suite still passes (in the sandbox)."
+    },
+    "forge.gates-de": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "**Gates D, E** — a rescan ([`forge/rescan.py`](forge/rescan.py), an `ast` parser) shows the finding is gone and no new finding was introduced."
+    },
+    "forge.pr": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "an evidence-packet PR is produced (a dry run: the patched tree + `PR_BODY.md` + `fix.diff` written to `runs/`; nothing is pushed"
+    },
+    "forge.propose": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "The agents propose; the gates dispose."
+    },
+    "forge.repro-agent": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "authors a reproduction that must make **Gate A fail** on the vulnerable code. If no attempt makes Gate A fail, the outcome is `repro_invalid`: FORGE will not try to \"fix\" something it cannot even reproduce."
+    },
+    "forge.strategist": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "decides *where* the fix belongs (code change vs. dependency bump vs. base image) before a line is written."
+    },
+    "forge.patcher": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "authors a minimal patch. The existing **diff-lint** still rejects any patch that weakens a test or adds a suppression, and **Gates B–E** must pass. A failing gate's evidence is fed back to the agent for another attempt, up to a **spend/iteration budget**"
+    },
+    "forge.abstain": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "FORGE **abstains** and writes an evidence report naming where it stopped — `repro_invalid`, `failed_gate`, `failed_lint`, or `budget_exhausted`."
+    },
+    "forge.agents": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "**Replay agents** (default) — deterministic, offline, zero-cost; they replay a recorded overlay and are still judged by every gate. - **Claude agents** — author fresh reproductions and patches when `ANTHROPIC_API_KEY` is set"
+    },
+    "forge.classes": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "is now a per-class detector registry (10 flaw classes)"
+    },
+    "forge.results": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "**Results** (deterministic spine, 20 runnable cases, all 20 produced their expected outcome):"
+    },
+    "forge.rates": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "| Valid PR rate (Cat 1 reference fixes) | ≥ 70% | 100% (10/10) | | False-fix rate | < 2% | 0% (0/10) | | Correct abstention (Cat 4) | ≥ 90% | 100% (10/10) |"
+    },
+    "forge.scope": {
+      "repo": "forge",
+      "path": "README.md",
+      "commit": "c00f183",
+      "quote": "These numbers score the **gates and the corpus**"
+    },
+    "forge.python": {
+      "repo": "forge",
+      "path": "pyproject.toml",
+      "commit": "c00f183",
+      "quote": "requires-python = \">=3.11\""
+    },
+    "proving-ground.headline": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "**An automated security-testing harness — behind a hard safety cage.** The cage is built and tested *first*; no offensive capability exists until it passes."
+    },
+    "proving-ground.allowlist": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "Edit [`targets.yaml`](targets.yaml) to declare the owned, local targets. Anything not listed — and anything that resolves to a public or metadata address — is rejected by the linter. A missing/empty file blocks everything (fail closed)."
+    },
+    "proving-ground.preflight": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "refuses to start a run if any target is not an owned, private (RFC1918/loopback) address in the allowlist."
+    },
+    "proving-ground.linter": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "a deterministic, un-overridable gate that returns ALLOW / BLOCK / THROTTLE for every action: allowlist → network class (no public, no cloud metadata) → destructive-payload denylist → budget → rate. It fails closed."
+    },
+    "proving-ground.provenance": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "append-only, replayable JSONL audit trail."
+    },
+    "proving-ground.sandbox": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "hardened, ephemeral containers on an internal Docker network with no route to the internet."
+    },
+    "proving-ground.ethics": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "Defensive by construction: every action is checked against an owned-only target allowlist, a destructive-payload denylist, and an egress-denied sandbox, and every action is logged for audit."
+    },
+    "proving-ground.surface-a": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "with five planted weaknesses, and one technique per class ([`proving_ground/web/`](proving_ground/web/techniques.py)): **SQLi, reflected XSS, IDOR, SSRF, auth-bypass**."
+    },
+    "proving-ground.canary": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "Each technique confirms only when it observes its **benign canary** (a marker, never real data or damage)"
+    },
+    "proving-ground.blackboard": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "A step writes an observation (a leaked credential, an id); a later step reads it as input. That is chaining."
+    },
+    "proving-ground.planner": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "The default `HeuristicPlanner` is deterministic and offline; `ClaudePlanner` asks Claude to prioritise (its pick is validated against the runnable set, so it can prioritise but never select something disallowed)."
+    },
+    "proving-ground.chain-a": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "Dynamic planner (heuristic + Claude), blackboard-driven capabilities, a SQLi→credential→admin chain, every action cage-gated with zero violations."
+    },
+    "proving-ground.surface-b": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "Deliberately-weak support agent; direct/indirect injection, disclosure, excessive agency, memory poisoning, multi-agent trust; MAESTRO-structured coverage; an indirect-injection→unauthorized-refund chain; disclosure reports."
+    },
+    "proving-ground.owasp-llm": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "Coverage is **MAESTRO-structured** and mapped to the **OWASP LLM Top 10**"
+    },
+    "proving-ground.no-funds": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "The proof is a stub marker; no funds move."
+    },
+    "proving-ground.disclosure": {
+      "repo": "proving-ground",
+      "path": "proving_ground/report.py",
+      "commit": "3d40870",
+      "quote": "a ``disclosure.md`` — a stakeholder-scoped, HackerOne-style summary of each confirmed finding, with impact stated in plain language."
+    },
+    "proving-ground.safety-summary": {
+      "repo": "proving-ground",
+      "path": "README.md",
+      "commit": "3d40870",
+      "quote": "The disclosure report adds the attack path, the chains, and a safety summary proving **zero cage violations**."
+    },
+    "proving-ground.python": {
+      "repo": "proving-ground",
+      "path": "pyproject.toml",
+      "commit": "3d40870",
+      "quote": "requires-python = \">=3.11\""
+    }
+  }
+}

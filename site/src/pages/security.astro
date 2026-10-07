@@ -134,8 +134,10 @@ const contactControls = [
       <section id="accuracy" class="detail">
         <h3>{label('accuracy')} <span class="kicker">Content provenance</span></h3>
         <ul class="facts">
-          <li>Every build compares the site's work history, titles, dates, bullets and certifications with my LaTeX resume, word for word and in both directions, including bold emphasis.</li>
-          <li>Every skill and tool shown must appear in the resume. A number in any site wording must appear in the resume lines it cites, so metrics can't be invented.</li>
+          <li>Before publishing, I compare the resume data behind the site (titles, dates, bullets and certifications) with my LaTeX resume, word for word and in both directions, including bold emphasis, and check that every skill and tool shown appears in it. The resume source is private, so this runs on my machine.</li>
+          <li>Every project claim cites a verbatim quote from that project's repository. A number must appear in its quote, every tool listed must be named in one, and no project's write-up may mention another project. I check the quotes against the repositories themselves before publishing, since they're private.</li>
+          <li>The site names no employers or schools. The build fails if one appears on any page.</li>
+          <li>On every build, a number in any site wording must appear in the sources it cites, so metrics can't be invented.</li>
           <li>Every piece of wording written for the site must be approved by me before it can deploy, and the share image is rebuilt whenever my name, title or tagline changes.</li>
         </ul>
       </section>
