@@ -202,7 +202,7 @@ test('a number not in the project\'s quotes fails; one that is passes', () => {
 
 test('the overview must be marked future and say it is not built', () => {
   expectError(run((i) => { i.projects.overview.status = 'live'; }), /projects\.json: overview\.status/);
-  expectError(run((i) => { i.copy['overview.disclaimer'].text = 'How the five connect.'; }), /must say the connections are not built/);
+  expectError(run((i) => { i.copy['overview.disclaimer'].text = 'How the five connect.'; }), /must say the connections are future work, not built/);
   expectError(run((i) => { delete i.copy['overview.disclaimer']; }), /missing "overview\.disclaimer"/);
 });
 
