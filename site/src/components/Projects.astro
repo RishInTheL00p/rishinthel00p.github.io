@@ -31,7 +31,7 @@ import { projects, overview, overviewHref, KIND_LABEL, LEGEND_KINDS } from '../l
           <header class="panel-head">
             <h3>{p.name}</h3>
             <p class="tagline">{p.tagline}</p>
-            <p class="meaning"><span class="meaning-label">Why the name</span>{p.meaning}</p>
+            <p class="meaning"><span class="meaning-label">Why the name</span>{p.meaning[0]}{p.meaning[1] && <span class="meaning-rest">{p.meaning[1]}</span>}</p>
           </header>
 
           <ol class="flow" aria-label={`${p.name}, step by step`}>

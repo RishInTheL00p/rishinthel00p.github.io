@@ -166,6 +166,7 @@ button { font: inherit; color: inherit; }
   font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
   margin-right: 8px;
 }
+.meaning-rest { display: block; }
 .human-callout {
   display: flex; gap: 12px; align-items: flex-start; margin-bottom: 20px; padding: 14px 16px;
   border: 1px solid var(--human); border-radius: var(--radius-sm); background: var(--human-soft);

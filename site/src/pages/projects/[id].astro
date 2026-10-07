@@ -21,7 +21,7 @@ const { project: p } = Astro.props;
       <p class="eyebrow">Project, technical view</p>
       <h1>{p.name}</h1>
       <p class="lede">{p.tagline}</p>
-      <p class="meaning"><span class="meaning-label">Why the name</span>{p.meaning}</p>
+      <p class="meaning"><span class="meaning-label">Why the name</span>{p.meaning[0]}{p.meaning[1] && <span class="meaning-rest">{p.meaning[1]}</span>}</p>
       <p>{p.summary}</p>
 
       <dl class="facts card">
