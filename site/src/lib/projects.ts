@@ -16,6 +16,12 @@ export const KIND_LABEL: Record<Kind, string> = {
 };
 export const LEGEND_KINDS: Kind[] = ['deterministic', 'agent', 'gate', 'human'];
 
+/** Splits a name meaning at its first sentence end: [the word, the project]. */
+function splitMeaning(text: string): [string, string] {
+  const at = text.search(/[.!?]\s/);
+  return at < 0 ? [text, ''] : [text.slice(0, at + 1), text.slice(at + 2)];
+}
+
 export const projectHref = (id: string) => `/projects/${id}/`;
 export const overviewHref = '/projects/overview/';
 
@@ -26,7 +32,8 @@ export const projects = projectData.projects.map((p) => ({
   stack: p.stack,
   href: projectHref(p.id),
   tagline: copy(`project.${p.id}.tagline`),
-  meaning: copy(`project.${p.id}.name-meaning`),
+  // Two lines on the page: what the word means, then how the project lives up to it.
+  meaning: splitMeaning(copy(`project.${p.id}.name-meaning`)),
   summary: copy(`project.${p.id}.summary`),
   human: copy(`project.${p.id}.human`),
   stages: p.stages.map((s) => ({
