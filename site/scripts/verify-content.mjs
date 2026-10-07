@@ -270,7 +270,7 @@ export function verifyContent({ tex, resume: resumeRaw, pillars: pillarsRaw, cop
 
   // The overview is a future vision and must say so on the page.
   const disclaimer = copy['overview.disclaimer']?.text;
-  if (disclaimer && !/\bnot (yet )?built\b/i.test(disclaimer)) fail('copy "overview.disclaimer": must say the connections are not built');
+  if (disclaimer && !/\bnot (yet )?built\b|\bfuture\b/i.test(disclaimer)) fail('copy "overview.disclaimer": must say the connections are future work, not built');
   // Every quote is published with the source, so none may sit there unused.
   for (const sid of Object.keys(projects.sources)) if (!citedSources.has(sid)) fail(`source "${sid}": not cited by any project or copy`);
 

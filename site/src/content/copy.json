@@ -147,7 +147,7 @@
   "project.proving-ground.stage.report.detail": { "text": "Confirmed results normalize into findings plus a HackerOne-style disclosure report with impact in plain language, the attack path, the chains and a safety summary.", "sources": ["proving-ground.disclosure","proving-ground.safety-summary","proving-ground.surface-a"], "approved": true },
   "projects.heading": { "text": "Five highlight projects, each built to run end to end", "sources": ["site"], "approved": true },
   "projects.lede": { "text": "Pick a project and click through its stages. Each one is designed around a real security workflow, and each has a point where a person makes the final call.", "sources": ["site"], "approved": true },
-  "overview.title": { "text": "System Overview: one agentic vulnerability program", "sources": ["site"], "approved": true },
-  "overview.body": { "text": "The next step is connecting the five into one loop. CONFLUX would ingest and deduplicate findings, ORACLE would triage them, CADENCE would carry each one through its lifecycle, and FORGE would propose a proven fix. PROVING GROUND would feed in new findings and re-test after each fix to confirm it's closed.", "sources": ["site"], "approved": true },
-  "overview.disclaimer": { "text": "Future vision: these connections are not built yet. Today each project runs on its own.", "sources": ["site"], "approved": true }
+  "overview.title": { "text": "System Overview: An Agentic Vulnerability Program", "sources": ["site"], "approved": true },
+  "overview.body": { "text": "Currently working on a plan on connecting these 5 projects into one loop. CONFLUX would ingest and deduplicate findings, ORACLE would triage them, CADENCE would carry each one through its lifecycle, and FORGE would propose a proven fix. PROVING GROUND would feed in new findings and re-test after each fix to confirm it's closed.", "sources": ["site"], "approved": true },
+  "overview.disclaimer": { "text": "Future vision is to create connectors between these 5 projects for an end-to-end vulnerability program.", "sources": ["site"], "approved": true }
 }
