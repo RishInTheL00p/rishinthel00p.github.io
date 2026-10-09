@@ -42,7 +42,7 @@ jobs:
       - run: npm audit signatures
       - name: Unit tests (content and build-output checks)
         run: npm test
-      - name: Verify site content against the resume
+      - name: Verify site content (approvals, cited numbers, project rules, disclosure)
         run: npm run verify
       - name: Type check
         run: npm run typecheck

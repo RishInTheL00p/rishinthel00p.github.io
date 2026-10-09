@@ -3,11 +3,13 @@
 import resumeRaw from '../content/resume.json';
 import pillarsRaw from '../content/pillars.json';
 import copyRaw from '../content/copy.json';
-import { ResumeSchema, PillarsSchema, CopySchema } from '../content/schema.ts';
+import projectsRaw from '../content/projects.json';
+import { ResumeSchema, PillarsSchema, CopySchema, ProjectsSchema } from '../content/schema.ts';
 import { buildCsp, contactConfig } from './csp.mjs';
 
 export const resume = ResumeSchema.parse(resumeRaw);
 export const pillarData = PillarsSchema.parse(pillarsRaw);
+export const projectData = ProjectsSchema.parse(projectsRaw);
 const copyData = CopySchema.parse(copyRaw);
 
 // Local previews of unapproved drafts only. CI runs the strict content check
@@ -60,16 +62,6 @@ export function richParts(text: string): { text: string; bold: boolean }[] {
     .split('**')
     .map((t, i) => ({ text: t, bold: i % 2 === 1 }))
     .filter((p) => p.text.length > 0);
-}
-
-const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-/** "Sept 2021" → sortable number (year * 12 + month). "Present" sorts last. */
-export function monthIndex(value: string): number {
-  if (value === 'Present') return Number.MAX_SAFE_INTEGER;
-  const [month = '', year = ''] = value.split(' ');
-  const m = MONTHS.indexOf(month.slice(0, 3).toLowerCase());
-  if (m < 0 || !/^\d{4}$/.test(year)) throw new Error(`Unrecognized date "${value}"`);
-  return Number(year) * 12 + m;
 }
 
 /** "more than 7 years" in the verbatim summary → 7. Never computed from dates. */

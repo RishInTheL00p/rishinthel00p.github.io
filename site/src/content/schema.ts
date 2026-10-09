@@ -66,6 +66,60 @@ export const CopySchema = z.record(
   }),
 );
 
+// The five portfolio projects, in display order. Each is shown standalone;
+// only the overview may relate them, and only as a future vision.
+export const PROJECT_IDS = ['conflux', 'oracle', 'cadence', 'forge', 'proving-ground'] as const;
+const projectId = z.enum(PROJECT_IDS);
+// "<project>.<slug>", e.g. "oracle.adjudicator". The prefix names the repo it quotes.
+const sourceId = z.string().regex(/^[a-z0-9-]+\.[a-z0-9.-]+$/, 'source id like "oracle.adjudicator"');
+// Path inside a project repo: relative, forward slashes, never climbing out.
+const repoPath = z
+  .string()
+  .regex(/^(?!\/)(?![A-Za-z]:)[\w.-]+(\/[\w.-]+)*$/, 'relative repo path')
+  .refine((p) => !p.split('/').includes('..'), 'must not contain ".."');
+
+export const ProjectsSchema = z.strictObject({
+  projects: z
+    .array(
+      z.strictObject({
+        id: projectId,
+        name: text,
+        orchestrator: text,
+        stages: z
+          .array(
+            z.strictObject({
+              id,
+              kind: z.enum(['input', 'deterministic', 'agent', 'gate', 'human', 'output']),
+              sources: z.array(sourceId).min(1),
+            }),
+          )
+          .min(4)
+          .max(6),
+        // Where a person makes the call in this project's flow.
+        human: z.strictObject({ stage: id, sources: z.array(sourceId).min(1) }),
+        stack: z.array(text).min(1),
+      }),
+    )
+    .max(PROJECT_IDS.length),
+  overview: z.strictObject({
+    status: z.literal('future'),
+    flow: z.array(projectId).min(2),
+    feedback: projectId,
+  }),
+  // Verbatim quotes from the private repos backing every project claim.
+  // Published with the site's source, so they are screened like copy.
+  sources: z.record(
+    sourceId,
+    z.strictObject({
+      repo: projectId,
+      path: repoPath,
+      commit: z.string().regex(/^[0-9a-f]{7,40}$/, 'git commit sha'),
+      quote: text,
+    }),
+  ),
+});
+
 export type Resume = z.infer<typeof ResumeSchema>;
 export type Pillars = z.infer<typeof PillarsSchema>;
 export type Copy = z.infer<typeof CopySchema>;
+export type Projects = z.infer<typeof ProjectsSchema>;

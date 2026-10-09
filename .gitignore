@@ -2,6 +2,10 @@
 resume/private/
 *.pdf
 
+# --- Resume source: kept local, never published ---
+resume/
+*.tex
+
 # --- Secrets ---
 .env
 .env.*
@@ -30,3 +34,4 @@ Thumbs.db
 
 # --- Private planning notes (local only) ---
 docs/ARCHITECTURE.md
+docs/PLAN-*.md

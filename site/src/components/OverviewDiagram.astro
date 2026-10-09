@@ -1,0 +1,78 @@
+---
+// The future pipeline drawn as dashed boxes: the main flow left to right, and
+// the tester looping back underneath. Every box is dashed because none of
+// these connections exist yet.
+//   links: true  → each box links to that project's technical page
+//   links: false → each box is a pointer shortcut (data-goto) for the homepage
+//                  tabs; the diagram is then hidden from screen readers, since
+//                  the overview text says the same thing
+import { overview, projectName, projectHref } from '../lib/projects.ts';
+
+interface Props {
+  links?: boolean;
+}
+const { links = false } = Astro.props;
+---
+<div class="vision" aria-hidden={links ? undefined : 'true'}>
+  <ol class="vision-flow">
+    {overview.flow.map((id, i) => (
+      <li>
+        {links
+          ? <a class="vnode" href={projectHref(id)}>{projectName(id)}</a>
+          : <button type="button" class="vnode" data-goto={id} tabindex="-1">{projectName(id)}</button>}
+        {i < overview.flow.length - 1 && <span class="varrow" aria-hidden="true"></span>}
+      </li>
+    ))}
+  </ol>
+  <div class="vision-loop">
+    {links
+      ? <a class="vnode vnode-loop" href={projectHref(overview.feedback)}><span class="loop-glyph" aria-hidden="true">↺</span> {projectName(overview.feedback)}</a>
+      : <button type="button" class="vnode vnode-loop" data-goto={overview.feedback} tabindex="-1"><span class="loop-glyph">↺</span> {projectName(overview.feedback)}</button>}
+  </div>
+</div>
+
+<style>
+  .vision { padding-bottom: 8px; }
+  .vision-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px; }
+  .vision-flow li { position: relative; min-width: 0; }
+  .vnode {
+    display: block; width: 100%; padding: 14px 10px; cursor: pointer; text-align: center; text-decoration: none;
+    font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--text);
+    border: 1.5px dashed var(--text-muted); border-radius: var(--radius-sm); background: var(--bg-elev);
+    overflow-wrap: break-word;
+  }
+  .vnode:hover { border-color: var(--text); }
+  a.vnode:hover { text-decoration: underline; }
+
+  .varrow {
+    position: absolute; top: 50%; right: -27px; width: 24px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--text-muted) 0 5px, transparent 5px 9px); opacity: 0.75;
+  }
+  .varrow::after {
+    content: ''; position: absolute; right: -2px; top: -4px;
+    border-left: 7px solid var(--text-muted); border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+  }
+
+  .vision-loop { position: relative; display: flex; justify-content: center; margin-top: 40px; }
+  /* Dashed bracket: the tester's findings feed the start, and it re-tests after the end. */
+  .vision-loop::before {
+    content: ''; position: absolute; left: 12.5%; right: 12.5%; top: -40px; height: 64px;
+    border: 2px dashed var(--border); border-top: 0; border-radius: 0 0 14px 14px;
+  }
+  .vnode-loop { position: relative; width: auto; padding: 12px 18px; }
+  .loop-glyph { margin-right: 4px; }
+
+  @media (max-width: 760px) {
+    .vision-flow { grid-template-columns: 1fr; gap: 22px; }
+    .varrow {
+      top: auto; right: auto; left: 50%; bottom: -20px; width: 2px; height: 18px;
+      background: repeating-linear-gradient(180deg, var(--text-muted) 0 5px, transparent 5px 9px);
+    }
+    .varrow::after {
+      right: auto; top: auto; left: -4px; bottom: -3px;
+      border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--text-muted); border-bottom: 0;
+    }
+    .vision-loop { margin-top: 22px; }
+    .vision-loop::before { display: none; }
+  }
+</style>
